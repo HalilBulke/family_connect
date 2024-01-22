@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">FamilyConnect</string>
+    <string name="login_header">Login to Famil Connect with your eamil and password</string>
+    <string name="signup_header">Don\'t have an account?</string>
+    <string name="signup_button_text">Register</string>
+    <string name="error_check_credentials">Invalid email or password. Please try again.</string>
+    <string name="email_error">Please enter a valid mail</string>
+    <string name="email_hint">Enter your mail</string>
+    <string name="password_error">Please enter your password</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="login_button_text">Login</string>
+    <string name="loading_text">Logging you in</string>
+    <string name="button_default_loading_text">Loading</string>
+    <string name="password_check_hint">Please validate your password</string>
+    <string name="full_name">Please enter your full name</string>
+    <string name="full_name_error">Please enter a valid full name</string>
+    <string name="register_header">Join Family Connect, simplify life, and cherish every moment together!</string>
 </resources>
