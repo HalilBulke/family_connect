@@ -4,11 +4,11 @@ import android.util.Base64
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.IOException
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
+import javax.inject.Inject
 
 sealed interface LoginUiState {
     object Default : LoginUiState
@@ -48,6 +48,12 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 val encodedCredentials = Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
                 val authorizationHeader = "Basic $encodedCredentials"
                 UserToken.saveToken(authorizationHeader)
+
+
+                //until repository connection we just send success for development purposes.
+                _uiState.value = LoginUiState.Success
+
+                /*
                 val response = loginRepository.login()
 
                 if (response.isSuccessful) {
@@ -60,6 +66,11 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 } else {
                     _uiState.value = LoginUiState.LoginError
                 }
+                */
+
+
+
+
             } catch (e: IOException) {
                 _uiState.value = LoginUiState.LoginError
             }

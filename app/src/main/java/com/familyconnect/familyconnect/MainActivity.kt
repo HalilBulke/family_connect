@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.familyconnect.familyconnect.dashboard.DashboardScreen
 import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
@@ -50,7 +51,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "dashboard") {
-                            //DashboardScreen()
+                            DashboardScreen()
                         }
                     }
                 }
