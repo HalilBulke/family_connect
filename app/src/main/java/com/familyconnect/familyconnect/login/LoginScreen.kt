@@ -51,7 +51,45 @@ import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
+import androidx.compose.ui.tooling.preview.Preview
+import retrofit2.Response
 
+class MockLoginRepository : LoginRepository {
+    override suspend fun login(): Response<Unit> {
+        // Mock login implementation
+        // For preview purposes, you can return a successful response
+        return Response.success(Unit)
+    }
+}
+
+
+@Preview
+@Composable
+fun LaunchScreenPreview() {
+    LaunchScreen {}
+}
+
+@Preview
+@Composable
+fun LoginPagePreview() {
+    // Create a mock LoginRepository for preview
+    val loginRepository = MockLoginRepository()
+
+    // Create a mock ViewModel for preview, passing the mock LoginRepository
+    val viewModel = LoginViewModel(loginRepository)
+
+    // Define mock actions for onSuccess and onRegister
+    val onSuccess = {}
+    val onRegister = {}
+
+    // Call the LoginPage Composable with mock data
+    LoginPage(viewModel = viewModel, onSuccess = onSuccess, onRegister = onRegister)
+    // Create a mock LoginUiState for preview
+    val uiState = LoginUiState.Success // or any other state you want to preview
+
+    // Call the LoginBox Composable with mock data
+    LoginBox(uiState = uiState, viewModel = viewModel, onRegister = onRegister, modifier = Modifier.fillMaxSize())
+}
 
 @Composable
 fun LoginScreen(
