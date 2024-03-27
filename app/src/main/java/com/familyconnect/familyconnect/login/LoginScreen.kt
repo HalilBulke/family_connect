@@ -136,7 +136,7 @@ fun LaunchScreen(onComplete: () -> Unit) {
                     .wrapContentSize()
             )
             Text(
-                text = "Famil Connect",
+                text = "Family Connect",
                 color = Color.White,
                 textAlign = TextAlign.Center,
                 fontSize = 30.sp,
