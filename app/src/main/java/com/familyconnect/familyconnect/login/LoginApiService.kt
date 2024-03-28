@@ -1,9 +1,13 @@
 package com.familyconnect.familyconnect.login
 
+import com.familyconnect.familyconnect.register.RegisterScreenPostItemBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface LoginApiService {
     @POST("auth/login")
-    suspend fun login(): Response<Unit>
+    suspend fun login(
+        @Body loginBody: LoginScreenPostItemBody
+    ): Response<Unit>
 }

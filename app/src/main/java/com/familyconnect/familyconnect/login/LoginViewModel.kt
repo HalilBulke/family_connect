@@ -3,6 +3,7 @@ package com.familyconnect.familyconnect.login
 import android.util.Base64
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.register.RegisterScreenPostItemBody
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,28 +50,19 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 val authorizationHeader = "Basic $encodedCredentials"
                 UserToken.saveToken(authorizationHeader)
 
-
-                //until repository connection we just send success for development purposes.
-                _uiState.value = LoginUiState.Success
-
-                /*
-                val response = loginRepository.login()
+                val loginBody = LoginScreenPostItemBody(email, password)
+                val response = loginRepository.login(loginBody)
 
                 if (response.isSuccessful) {
-                    val token = response.headers().values("Authorization")[0]
+                   // val token = response.headers().values("Authorization")[0]
 
-                    UserToken.saveToken(token)
-
+                    //UserToken.saveToken(token)
+                    //TODO check response body
                     _uiState.value = LoginUiState.Success
 
                 } else {
                     _uiState.value = LoginUiState.LoginError
                 }
-                */
-
-
-
-
             } catch (e: IOException) {
                 _uiState.value = LoginUiState.LoginError
             }
