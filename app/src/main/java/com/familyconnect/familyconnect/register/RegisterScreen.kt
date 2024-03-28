@@ -31,9 +31,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
-import androidx.compose.ui.tooling.preview.Preview
-import retrofit2.Response
 
+
+/*
 class MockRegisterRepository : RegisterRepository {
     override suspend fun register(): Response<Unit> {
         // Mock register implementation
@@ -57,6 +57,10 @@ fun RegisterScreenPreview() {
     // Call the RegisterScreen Composable with mock data
     RegisterScreen(viewModel = viewModel, onSuccess = onSuccess)
 }
+
+
+*/
+
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = hiltViewModel(),

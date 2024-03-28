@@ -51,9 +51,9 @@ import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
-import androidx.compose.ui.tooling.preview.Preview
-import retrofit2.Response
 
+
+/*
 class MockLoginRepository : LoginRepository {
     override suspend fun login(): Response<Unit> {
         // Mock login implementation
@@ -90,7 +90,7 @@ fun LoginPagePreview() {
     // Call the LoginBox Composable with mock data
     LoginBox(uiState = uiState, viewModel = viewModel, onRegister = onRegister, modifier = Modifier.fillMaxSize())
 }
-
+*/
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
