@@ -51,23 +51,17 @@ class RegisterViewModel @Inject constructor(private val registerRepository: Regi
         viewModelScope.launch {
             _uiState.value = RegisterUiState.Loading
             try {
-                /*
-
+                val registerBody = RegisterScreenPostItemBody(fullName, password)
+                val response = registerRepository.register(registerBody)
                 if (response.isSuccessful) {
-
-
                     _uiState.value = RegisterUiState.Success
-
                 } else {
                     _uiState.value = RegisterUiState.RegisterError
                 }
 
-                 */
             } catch (e: IOException) {
                 _uiState.value = RegisterUiState.RegisterError
             }
         }
     }
-
-
 }
