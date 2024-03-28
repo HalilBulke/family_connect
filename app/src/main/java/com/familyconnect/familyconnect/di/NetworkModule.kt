@@ -19,7 +19,7 @@ import com.familyconnect.familyconnect.register.RegisterRepository
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 
-private const val BASE_URL = "http://localhost:8000"
+private const val BASE_URL = "http://localhost:8080"
 
 @Module
 @InstallIn(SingletonComponent::class)

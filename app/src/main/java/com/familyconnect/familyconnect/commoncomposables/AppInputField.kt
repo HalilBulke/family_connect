@@ -45,6 +45,7 @@ fun AppInputField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = Color.Black,
             disabledBorderColor = Color.Gray,
             focusedBorderColor = if (isError) {
                 Color.Red
