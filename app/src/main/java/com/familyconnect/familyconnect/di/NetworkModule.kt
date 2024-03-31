@@ -19,7 +19,8 @@ import com.familyconnect.familyconnect.register.RegisterRepository
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
 
-private const val BASE_URL = "http://localhost:8080"
+//Enter your local ip as subdomain instead of 192.168.1.2
+private const val BASE_URL = "http://192.168.1.2:8000"
 
 @Module
 @InstallIn(SingletonComponent::class)
