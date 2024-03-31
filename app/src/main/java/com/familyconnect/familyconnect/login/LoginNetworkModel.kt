@@ -3,6 +3,6 @@ package com.familyconnect.familyconnect.login
 import com.google.gson.annotations.SerializedName
 
 class LoginScreenPostItemBody (
-    @SerializedName("userName") val userName:String?,
+    @SerializedName("email") val email:String?,
     @SerializedName("password") val password:String?,
 )

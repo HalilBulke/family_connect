@@ -3,14 +3,13 @@ package com.familyconnect.familyconnect.login
 import android.util.Base64
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.familyconnect.familyconnect.register.RegisterScreenPostItemBody
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
-
+import android.util.Log
 sealed interface LoginUiState {
     object Default : LoginUiState
     data class InputsNotValid(val isEmailError: Boolean, val isPasswordError: Boolean) :
@@ -29,10 +28,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         return Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$").matches(email) && email.isNotEmpty()
     }
     private fun areInputsValid(email: String, password: String): Boolean {
-        if (isValidEmail(email) && password.isNotEmpty()) {
-            return true
-        }
-        return false
+        return isValidEmail(email) && password.isNotEmpty()
     }
     fun onLoginClick(email: String, password: String) {
         if (areInputsValid(email, password).not()) {
@@ -54,12 +50,20 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                 val response = loginRepository.login(loginBody)
 
                 if (response.isSuccessful) {
-                   // val token = response.headers().values("Authorization")[0]
-
-                    //UserToken.saveToken(token)
-                    //TODO check response body
-                    _uiState.value = LoginUiState.Success
-
+                    val responseBody = response.body()
+                    Log.d("responseBody", responseBody.toString())
+                    if (responseBody != null) {
+                        val jwtToken = responseBody.jwt
+                        val user = responseBody.user
+                        if (jwtToken.isNotEmpty()){
+                            _uiState.value = LoginUiState.Success
+                            UserToken.saveToken(jwtToken)
+                            Log.d("UserToken", UserToken.getToken())
+                        }
+                        else {
+                            _uiState.value = LoginUiState.LoginError
+                        }
+                    }
                 } else {
                     _uiState.value = LoginUiState.LoginError
                 }
