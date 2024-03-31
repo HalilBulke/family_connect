@@ -2,6 +2,7 @@ package com.familyconnect.familyconnect.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -31,11 +32,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.tooling.preview.Preview
+import retrofit2.Response
 
 
-/*
 class MockRegisterRepository : RegisterRepository {
-    override suspend fun register(): Response<Unit> {
+    override suspend fun register(registerBody: RegisterScreenPostItemBody): Response<Unit> {
         // Mock register implementation
         // For preview purposes, you can return a successful response
         return Response.success(Unit)
@@ -59,7 +63,7 @@ fun RegisterScreenPreview() {
 }
 
 
-*/
+
 
 @Composable
 fun RegisterScreen(
@@ -70,6 +74,8 @@ fun RegisterScreen(
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordCheck by rememberSaveable { mutableStateOf("") }
+    var selectedRole by rememberSaveable { mutableStateOf("PARENT") }
+    var isDropdownExpanded by rememberSaveable { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -162,6 +168,39 @@ fun RegisterScreen(
                 ),
             )
 
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Select Role: $selectedRole",
+                    color = if (isDropdownExpanded) Color.Blue else Color.Black,
+                    modifier = Modifier
+                        .padding(vertical = 12.dp, horizontal = 10.dp)
+                        .clickable { isDropdownExpanded = !isDropdownExpanded }
+                )
+
+                DropdownMenu(
+                    expanded = isDropdownExpanded,
+                    onDismissRequest = { isDropdownExpanded = false }
+
+                ) {
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedRole = "PARENT"
+                            isDropdownExpanded = false
+                        },
+                        text = { Text("Parent") }
+                    )
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedRole = "CHILD"
+                            isDropdownExpanded = false
+                        },
+                        text = { Text("Child") }
+                    )
+                }
+            }
+
             AppButton(
                 buttonText = "Register",
                 modifier = Modifier
@@ -169,7 +208,7 @@ fun RegisterScreen(
                     .aspectRatio(5.2f),
                 isLoading = uiState == RegisterUiState.Loading,
                 onClick = {
-                    viewModel.onRegisterClick(fullName, email, password, passwordCheck)
+                    viewModel.onRegisterClick(fullName, email, password, passwordCheck, selectedRole)
                 }
             )
         }

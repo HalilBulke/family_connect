@@ -35,7 +35,7 @@ class RegisterViewModel @Inject constructor(private val registerRepository: Regi
         return password == passwordCheck && password.isNotEmpty() && passwordCheck.isNotEmpty()
     }
 
-    fun onRegisterClick(fullName: String, email: String, password: String, passwordCheck: String) {
+    fun onRegisterClick(fullName: String, email: String, password: String, passwordCheck: String, selectedRole: String) {
         if (isValidFUllName(fullName).not()) {
             _uiState.value = RegisterUiState.FullNameNotValid
             return
@@ -51,7 +51,7 @@ class RegisterViewModel @Inject constructor(private val registerRepository: Regi
         viewModelScope.launch {
             _uiState.value = RegisterUiState.Loading
             try {
-                val registerBody = RegisterScreenPostItemBody(email, password, fullName, "PARENT")
+                val registerBody = RegisterScreenPostItemBody(email, password, fullName, selectedRole)
                 val response = registerRepository.register(registerBody)
                 if (response.isSuccessful) {
                     _uiState.value = RegisterUiState.Success
