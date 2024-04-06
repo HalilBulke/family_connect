@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.familyconnect.familyconnect.dashboard.DashboardScreen
 import com.familyconnect.familyconnect.login.LoginScreen
+import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +52,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(route = "dashboard") {
+                            //DashboardScreen()
+                            MainDashboardView(navController = navController)
+                        }
+
+                        composable(route = "calendar") {
                             DashboardScreen()
+
                         }
                     }
                 }
