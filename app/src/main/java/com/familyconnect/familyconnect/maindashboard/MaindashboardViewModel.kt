@@ -18,7 +18,7 @@ class MainDashboardViewModel @Inject constructor() : ViewModel() {
     val dashboardItems = listOf(
         DashboardItem(id = 1, title = "Family Members", icon = R.drawable.ic_family_connect, route = "family_members"),
         DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar"),
-        DashboardItem(id = 3, title = "Lists", icon = R.drawable.ic_family_connect, route = "lists"),
+        DashboardItem(id = 3, title = "Create Task", icon = R.drawable.ic_family_connect, route = "createTask"),
         DashboardItem(id = 4, title = "Budget", icon = R.drawable.ic_family_connect, route = "budget"),
 
 

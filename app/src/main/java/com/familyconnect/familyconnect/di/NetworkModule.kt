@@ -1,26 +1,29 @@
 package com.familyconnect.familyconnect.di
 
+import com.familyconnect.familyconnect.login.LoginApiService
+import com.familyconnect.familyconnect.login.LoginRepository
+import com.familyconnect.familyconnect.login.NetworkLoginRepository
+import com.familyconnect.familyconnect.login.UserToken
+import com.familyconnect.familyconnect.register.NetworkRegisterRepository
+import com.familyconnect.familyconnect.register.RegisterApiService
+import com.familyconnect.familyconnect.register.RegisterRepository
+import com.familyconnect.familyconnect.task.CreateTaskApiService
+import com.familyconnect.familyconnect.task.TaskRepository
+import com.familyconnect.familyconnect.task.TaskRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
-import com.familyconnect.familyconnect.login.UserToken
-import com.familyconnect.familyconnect.login.LoginRepository
-import com.familyconnect.familyconnect.login.NetworkLoginRepository
-import com.familyconnect.familyconnect.login.LoginApiService
-import com.familyconnect.familyconnect.register.NetworkRegisterRepository
-import com.familyconnect.familyconnect.register.RegisterApiService
-import com.familyconnect.familyconnect.register.RegisterRepository
-import okhttp3.Interceptor
-import okhttp3.logging.HttpLoggingInterceptor
 
 //Enter your local ip as subdomain instead of 192.168.1.2
-private const val BASE_URL = "http://192.168.1.2:8000"
+private const val BASE_URL = "http://192.168.56.1:8000"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -94,4 +97,21 @@ class NetworkModule {
     fun provideRegisterApiService(retrofit: Retrofit): RegisterApiService {
         return retrofit.create(RegisterApiService::class.java)
     }
+
+
+
+    //Create new Task
+    @Provides
+    @Singleton
+    fun provideTaskRepository(createTaskApiService: CreateTaskApiService): TaskRepository {
+        return TaskRepositoryImpl(createTaskApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCreateTaskApiService(retrofit: Retrofit): CreateTaskApiService =
+        retrofit.create(CreateTaskApiService::class.java)
+
+
+
 }

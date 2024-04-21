@@ -18,6 +18,7 @@ import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
+import com.familyconnect.familyconnect.task.CreateTaskScreen
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -65,6 +66,10 @@ class MainActivity : ComponentActivity() {
                         composable(route = "spinWheel") {
                             SpinWheelScreen()
 
+                        }
+
+                        composable(route = "createTask") {
+                            CreateTaskScreen()
                         }
                     }
                 }
