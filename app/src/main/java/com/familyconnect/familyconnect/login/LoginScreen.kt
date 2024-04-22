@@ -1,5 +1,6 @@
 package com.familyconnect.familyconnect.login
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -94,7 +95,7 @@ fun LoginPagePreview() {
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
-    onSuccess: () -> Unit,
+    onSuccess: (user: User) -> Unit,
     onRegister: () -> Unit,
 ) {
     var isLoginPageVisible by remember { mutableStateOf(false) }
@@ -154,13 +155,14 @@ fun LaunchScreen(onComplete: () -> Unit) {
 @Composable
 fun LoginPage(
     viewModel: LoginViewModel,
-    onSuccess: () -> Unit,
+    onSuccess: (user: User) -> Unit,
     onRegister: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState is LoginUiState.Success) {
-        onSuccess()
+        Log.d("loginUSER", viewModel.user.toString())
+        onSuccess(viewModel.user)
     } else {
         LoginScreen(uiState = uiState, viewModel = viewModel, onRegister = onRegister)
     }

@@ -24,6 +24,24 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Default)
     val uiState: StateFlow<LoginUiState> = _uiState
 
+    private var authority = Authority(
+        roleId = 0,
+        authority = "temp"
+    )
+
+    var user = User(
+        userId = 1,
+        username = "temp",
+        password = "password",
+        familyId = 123,
+        name = "temp",
+        authorities = listOf(authority),
+        enabled = true,
+        accountNonLocked = true,
+        accountNonExpired = true,
+        credentialsNonExpired = true
+    )
+
     private fun isValidEmail(email: String): Boolean {
         return Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\$").matches(email) && email.isNotEmpty()
     }
@@ -54,7 +72,8 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                     Log.d("responseBody", responseBody.toString())
                     if (responseBody != null) {
                         val jwtToken = responseBody.jwt
-                        val user = responseBody.user
+                        user = responseBody.user
+                        Log.d("user", user.toString())
                         if (jwtToken.isNotEmpty()){
                             _uiState.value = LoginUiState.Success
                             UserToken.saveToken(jwtToken)

@@ -1,6 +1,7 @@
 package com.familyconnect.familyconnect
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.dashboard.DashboardScreen
 import com.familyconnect.familyconnect.login.LoginScreen
+import com.familyconnect.familyconnect.login.User
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
@@ -39,7 +43,11 @@ class MainActivity : ComponentActivity() {
                         composable(route = "login") {
                             LoginScreen(
                                 onSuccess = {
-                                    navController.navigate("dashboard")
+                                    Log.d("familyID", it.familyId.toString())
+                                    val familyId = it.familyId.toString()
+                                    val name = it.name
+                                    val role = it.authorities[0].roleId.toString();
+                                    navController.navigate("dashboard/$familyId/$name/$role")
                                 },
                                 onRegister = {
                                     navController.navigate("register")
@@ -53,9 +61,26 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        composable(route = "dashboard") {
+                        composable(
+                            route = "dashboard/{familyId}/{name}/{role}",
+                            arguments = listOf(
+                                navArgument(name = "familyId"){
+                                    type = NavType.StringType
+                                },
+                                navArgument(name = "name"){
+                                    type = NavType.StringType
+                                },
+                                navArgument(name = "role"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
                             //DashboardScreen()
-                            MainDashboardView(navController = navController)
+                            MainDashboardView(navController = navController,
+                                familyId = backstackEntry.arguments?.getString("familyId"),
+                                name = backstackEntry.arguments?.getString("name"),
+                                role = backstackEntry.arguments?.getString("role"))
                         }
 
                         composable(route = "calendar") {

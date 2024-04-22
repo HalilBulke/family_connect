@@ -1,6 +1,7 @@
 package com.familyconnect.familyconnect.maindashboard
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,8 +39,13 @@ import com.familyconnect.familyconnect.R
 @Composable
 fun MainDashboardView(
     navController: NavHostController,
+    familyId : String?,
+    name : String?,
+    role: String?,
     viewModel: MainDashboardViewModel = hiltViewModel()
 ) {
+    Log.d("familyID", familyId.toString())
+    Log.d("NAME", name.toString())
     Scaffold(
         bottomBar = { BottomNavigationBar() }
     ) { paddingValues ->
@@ -49,14 +55,34 @@ fun MainDashboardView(
                 .padding(paddingValues),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            FamilyPhotoPlaceholder()
-            DashboardItemsGrid(
-                navController = navController,
-                items = viewModel.dashboardItems
-            )
+            if (role ==  "3" && familyId == "-1") {
+                FamilyPhotoPlaceholder()
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp, horizontal = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "You need to be added to a family to use functions",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            } else {
+                FamilyPhotoPlaceholder()
+                DashboardItemsGrid(
+                    navController = navController,
+                    items = viewModel.dashboardItems
+                )
+            }
         }
     }
 }
+
 
 
 @Composable
