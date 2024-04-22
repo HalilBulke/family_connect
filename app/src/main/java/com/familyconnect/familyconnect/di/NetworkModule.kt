@@ -1,5 +1,9 @@
 package com.familyconnect.familyconnect.di
 
+import android.util.Log
+import com.familyconnect.familyconnect.family.CreateFamilyApiService
+import com.familyconnect.familyconnect.family.FamilyRepository
+import com.familyconnect.familyconnect.family.NetworkFamilyRepository
 import com.familyconnect.familyconnect.login.LoginApiService
 import com.familyconnect.familyconnect.login.LoginRepository
 import com.familyconnect.familyconnect.login.NetworkLoginRepository
@@ -23,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 //Enter your local ip as subdomain instead of 192.168.1.2
-private const val BASE_URL = "http://192.168.56.1:8000"
+private const val BASE_URL = "http://192.168.1.6:8000"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -65,6 +69,7 @@ class NetworkModule {
     @Singleton
     fun provideAuthorizationInterceptor(): Interceptor {
         return Interceptor { chain ->
+            Log.d("HEADER-------------------------", UserToken.getToken())
             val request = chain
                 .request()
                 .newBuilder()
@@ -112,6 +117,16 @@ class NetworkModule {
     fun provideCreateTaskApiService(retrofit: Retrofit): CreateTaskApiService =
         retrofit.create(CreateTaskApiService::class.java)
 
+    // Family
+    @Provides
+    @Singleton
+    fun provideFamilyRepository(createFamilyApiService: CreateFamilyApiService): FamilyRepository {
+        return NetworkFamilyRepository(createFamilyApiService)
+    }
 
-
+    @Provides
+    @Singleton
+    fun provideCreateFamilyApiService(retrofit: Retrofit): CreateFamilyApiService {
+        return retrofit.create(CreateFamilyApiService::class.java)
+    }
 }

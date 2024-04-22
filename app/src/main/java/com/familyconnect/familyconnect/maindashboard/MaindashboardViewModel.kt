@@ -19,7 +19,7 @@ class MainDashboardViewModel @Inject constructor() : ViewModel() {
         DashboardItem(id = 1, title = "Family Members", icon = R.drawable.ic_family_connect, route = "family_members"),
         DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar"),
         DashboardItem(id = 3, title = "Create Task", icon = R.drawable.ic_family_connect, route = "createTask"),
-        DashboardItem(id = 4, title = "Budget", icon = R.drawable.ic_family_connect, route = "budget"),
+        DashboardItem(id = 4, title = "Create Family", icon = R.drawable.ic_family_connect, route = "createFamily"),
 
 
         DashboardItem(id = 5, title = "Spin Wheel", icon = R.drawable.ic_family_connect, route = "spinWheel"),

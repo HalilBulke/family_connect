@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.dashboard.DashboardScreen
+import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.login.User
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
@@ -95,6 +96,10 @@ class MainActivity : ComponentActivity() {
 
                         composable(route = "createTask") {
                             CreateTaskScreen()
+                        }
+
+                        composable(route = "createFamily") {
+                            CreateFamilyScreen()
                         }
                     }
                 }
