@@ -42,10 +42,13 @@ fun MainDashboardView(
     familyId : String?,
     name : String?,
     role: String?,
+    username: String?,
     viewModel: MainDashboardViewModel = hiltViewModel()
 ) {
-    Log.d("familyID", familyId.toString())
-    Log.d("NAME", name.toString())
+//    Log.d("familyID", familyId.toString())
+//    Log.d("NAME", name.toString())
+//    Log.d("UserName", username.toString())
+    viewModel.dashboardItems[3].route = "createFamily/$username"
     Scaffold(
         bottomBar = { BottomNavigationBar() }
     ) { paddingValues ->

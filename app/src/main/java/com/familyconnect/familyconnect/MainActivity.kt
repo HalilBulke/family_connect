@@ -47,8 +47,9 @@ class MainActivity : ComponentActivity() {
                                     Log.d("familyID", it.familyId.toString())
                                     val familyId = it.familyId.toString()
                                     val name = it.name
-                                    val role = it.authorities[0].roleId.toString();
-                                    navController.navigate("dashboard/$familyId/$name/$role")
+                                    val role = it.authorities[0].roleId.toString()
+                                    val username = it.username
+                                    navController.navigate("dashboard/$familyId/$name/$role/$username")
                                 },
                                 onRegister = {
                                     navController.navigate("register")
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
-                            route = "dashboard/{familyId}/{name}/{role}",
+                            route = "dashboard/{familyId}/{name}/{role}/{username}",
                             arguments = listOf(
                                 navArgument(name = "familyId"){
                                     type = NavType.StringType
@@ -73,7 +74,11 @@ class MainActivity : ComponentActivity() {
                                 },
                                 navArgument(name = "role"){
                                     type = NavType.StringType
+                                },
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
                                 }
+
                             )
                         )
                         {backstackEntry ->
@@ -81,7 +86,8 @@ class MainActivity : ComponentActivity() {
                             MainDashboardView(navController = navController,
                                 familyId = backstackEntry.arguments?.getString("familyId"),
                                 name = backstackEntry.arguments?.getString("name"),
-                                role = backstackEntry.arguments?.getString("role"))
+                                role = backstackEntry.arguments?.getString("role"),
+                                username = backstackEntry.arguments?.getString("username"))
                         }
 
                         composable(route = "calendar") {
@@ -98,8 +104,15 @@ class MainActivity : ComponentActivity() {
                             CreateTaskScreen()
                         }
 
-                        composable(route = "createFamily") {
-                            CreateFamilyScreen()
+                        composable(route = "createFamily/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            CreateFamilyScreen(username = backstackEntry.arguments?.getString("username"))
                         }
                     }
                 }

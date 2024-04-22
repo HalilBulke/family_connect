@@ -9,13 +9,13 @@ data class DashboardItem(
     val id: Int,
     val title: String,
     val icon: Int, // Icon resource id
-    val route: String
+    var route: String
 )
 
 @HiltViewModel
 class MainDashboardViewModel @Inject constructor() : ViewModel() {
     // List of dashboard items, replace the icons with the actual drawable resource IDs
-    val dashboardItems = listOf(
+    var dashboardItems = listOf(
         DashboardItem(id = 1, title = "Family Members", icon = R.drawable.ic_family_connect, route = "family_members"),
         DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar"),
         DashboardItem(id = 3, title = "Create Task", icon = R.drawable.ic_family_connect, route = "createTask"),

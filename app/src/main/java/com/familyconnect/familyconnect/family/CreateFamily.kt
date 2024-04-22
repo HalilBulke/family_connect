@@ -15,7 +15,9 @@ import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 
 @Composable
-fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel()) {
+fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel(),
+                       username : String?
+) {
     var familyName by remember { mutableStateOf("") }
     var familyCreatorUserName by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -34,7 +36,7 @@ fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel()) {
             isResponseError = false
         )
         AppInputField(
-            value = familyCreatorUserName,
+            value = username.toString(),
             onValueChange = { familyCreatorUserName = it },
             placeholderText = "Creator's username",
             isResponseError = false
@@ -47,7 +49,7 @@ fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel()) {
                 isLoading = true
                 val family = CreateFamilyRequestBody(
                     familyName = familyName,
-                    familyCreatorUserName = familyCreatorUserName
+                    familyCreatorUserName = username.toString()
                 )
                 viewModel.createFamily(family, onSuccess = {
                     isLoading = false
