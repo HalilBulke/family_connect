@@ -19,11 +19,11 @@ import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.dashboard.DashboardScreen
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
-import com.familyconnect.familyconnect.login.User
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
 import com.familyconnect.familyconnect.task.CreateTaskScreen
+import com.familyconnect.familyconnect.taskGetchild.GetTaskScreenchild
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -104,6 +104,7 @@ class MainActivity : ComponentActivity() {
                             CreateTaskScreen()
                         }
 
+
                         composable(route = "createFamily/{username}",
                             arguments = listOf(
                                 navArgument(name = "username"){
@@ -113,7 +114,23 @@ class MainActivity : ComponentActivity() {
                         )
                         {backstackEntry ->
                             CreateFamilyScreen(username = backstackEntry.arguments?.getString("username"))
+
                         }
+
+                        composable(route = "getTaskchild/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            GetTaskScreenchild(username = backstackEntry.arguments?.getString("username"))
+
+                        }
+
+
+
                     }
                 }
             }
