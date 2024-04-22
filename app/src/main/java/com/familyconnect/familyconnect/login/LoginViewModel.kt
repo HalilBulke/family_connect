@@ -76,7 +76,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                         Log.d("user", user.toString())
                         if (jwtToken.isNotEmpty()){
                             _uiState.value = LoginUiState.Success
-                            UserToken.saveToken(jwtToken)
+                            UserToken.saveToken("Bearer $jwtToken")
                             Log.d("UserToken", UserToken.getToken())
                         }
                         else {
