@@ -49,6 +49,7 @@ fun MainDashboardView(
 //    Log.d("UserName", username.toString())
     viewModel.dashboardItems[3].route = "createFamily/$username"
     viewModel.dashboardItems[6].route = "getTaskchild/$username"
+    viewModel.dashboardItems[8].route = "displayFamily/$username"
 
     Scaffold(
         bottomBar = { BottomNavigationBar() }

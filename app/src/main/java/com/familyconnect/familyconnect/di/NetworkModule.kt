@@ -1,6 +1,9 @@
 package com.familyconnect.familyconnect.di
 
 import android.util.Log
+import com.familyconnect.familyconnect.displayfamily.DisplayFamilyRepository
+import com.familyconnect.familyconnect.displayfamily.FamilyApiService
+import com.familyconnect.familyconnect.displayfamily.GetFamilyRepository
 import com.familyconnect.familyconnect.family.CreateFamilyApiService
 import com.familyconnect.familyconnect.family.FamilyRepository
 import com.familyconnect.familyconnect.family.NetworkFamilyRepository
@@ -128,5 +131,17 @@ class NetworkModule {
     @Singleton
     fun provideCreateFamilyApiService(retrofit: Retrofit): CreateFamilyApiService {
         return retrofit.create(CreateFamilyApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDisplayFamilyRepository(familyApiService: FamilyApiService): GetFamilyRepository {
+        return DisplayFamilyRepository(familyApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDisplayFamilyApiService(retrofit: Retrofit): FamilyApiService {
+        return retrofit.create(FamilyApiService::class.java)
     }
 }

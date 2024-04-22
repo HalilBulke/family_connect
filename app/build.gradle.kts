@@ -75,6 +75,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
     implementation("com.chargemap.compose:numberpicker:1.0.3")
 
+    //
+    implementation("androidx.compose.runtime:runtime-livedata:1.0.0")
+
+
     // Image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
 
