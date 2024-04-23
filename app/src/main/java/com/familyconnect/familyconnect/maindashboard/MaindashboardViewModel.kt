@@ -9,28 +9,36 @@ data class DashboardItem(
     val id: Int,
     val title: String,
     val icon: Int, // Icon resource id
-    var route: String
+    var route: String,
+    val permittedScenarios: List<Int> // List of permitted scenarios
 )
+
 
 @HiltViewModel
 class MainDashboardViewModel @Inject constructor() : ViewModel() {
-    // List of dashboard items, replace the icons with the actual drawable resource IDs
     var dashboardItems = listOf(
-        DashboardItem(id = 1, title = "Family Members", icon = R.drawable.ic_family_connect, route = "family_members"),
-        DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar"),
-        DashboardItem(id = 3, title = "Create Task", icon = R.drawable.ic_family_connect, route = "createTask"),
-        DashboardItem(id = 4, title = "Create Family", icon = R.drawable.ic_family_connect, route = "createFamily"),
-
-
-        DashboardItem(id = 5, title = "Spin Wheel", icon = R.drawable.ic_family_connect, route = "spinWheel"),
-        DashboardItem(id = 6, title = "Calendar", icon = R.drawable.ic_family_connect, route = "daily_activity"),
-        DashboardItem(id = 7, title = "Show my Tasks", icon = R.drawable.ic_family_connect, route = "getTaskchild"),
-        DashboardItem(id = 8, title = "Budget", icon = R.drawable.ic_family_connect, route = "settings"),
-
-        DashboardItem(id = 9, title = "My Family", icon = R.drawable.ic_family_connect, route = "displayFamily"),
-        DashboardItem(id = 10, title = "Add Member", icon = R.drawable.ic_family_connect, route = "addFamilyMember"),
-
-
-        // ... add other dashboard items
+        DashboardItem(id = 1, title = "TEMP", icon = R.drawable.ic_family_connect, route = "family_members", permittedScenarios = listOf(2, 4, 9)),
+        DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar", permittedScenarios = listOf(2, 3, 4, 9)),
+        DashboardItem(id = 3, title = "Create Task", icon = R.drawable.ic_family_connect, route = "createTask", permittedScenarios = listOf(4, 9)),
+        DashboardItem(id = 4, title = "Create Family", icon = R.drawable.ic_family_connect, route = "createFamily", permittedScenarios = listOf(3, 9)),
+        DashboardItem(id = 5, title = "Spin Wheel", icon = R.drawable.ic_family_connect, route = "spinWheel", permittedScenarios = listOf(2, 4, 9)),
+        DashboardItem(id = 6, title = "TEMP", icon = R.drawable.ic_family_connect, route = "daily_activity", permittedScenarios = listOf(2, 4, 9)),
+        DashboardItem(id = 7, title = "Show my Tasks", icon = R.drawable.ic_family_connect, route = "getTaskchild", permittedScenarios = listOf(2, 9)),
+        DashboardItem(id = 8, title = "TEMP", icon = R.drawable.ic_family_connect, route = "settings", permittedScenarios = listOf(2, 3, 4, 9)),
+        DashboardItem(id = 9, title = "My Family", icon = R.drawable.ic_family_connect, route = "displayFamily", permittedScenarios = listOf(2, 4, 9)),
+        DashboardItem(id = 10, title = "Add Member", icon = R.drawable.ic_family_connect, route = "addFamilyMember", permittedScenarios = listOf(4, 9))
     )
+
+    fun filterDashboardItems(role: String, hasFamily: Boolean): List<DashboardItem> {
+        val currentScenario = when {
+            role == "3" && !hasFamily -> 1
+            role == "3" && hasFamily -> 2
+            role == "2" && !hasFamily -> 3
+            role == "2" && hasFamily -> 4
+            role == "1" -> 9
+            else -> 0 // Default scenario
+        }
+        return dashboardItems.filter { it.permittedScenarios.contains(currentScenario) }
+    }
 }
+

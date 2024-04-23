@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,6 +52,10 @@ fun MainDashboardView(
     viewModel.dashboardItems[6].route = "getTaskchild/$username"
     viewModel.dashboardItems[8].route = "displayFamily/$username"
 
+    val dashboardItems = remember {
+        viewModel.filterDashboardItems(role.toString() , familyId != "-1")
+    }
+
     Scaffold(
         bottomBar = { BottomNavigationBar() }
     ) { paddingValues ->
@@ -60,7 +65,7 @@ fun MainDashboardView(
                 .padding(paddingValues),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            if (role ==  "3" && familyId == "-1") {
+            if (dashboardItems.isEmpty()) {
                 FamilyPhotoPlaceholder()
                 Card(
                     modifier = Modifier
@@ -81,7 +86,7 @@ fun MainDashboardView(
                 FamilyPhotoPlaceholder()
                 DashboardItemsGrid(
                     navController = navController,
-                    items = viewModel.dashboardItems
+                    items = dashboardItems
                 )
             }
         }
