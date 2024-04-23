@@ -92,6 +92,12 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.3")
 
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
+
+
+    // Lifecycle Runtime KTX for LiveData support in Compose
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    // LiveData compiler for Compose
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.6")
 }
 
 kapt {

@@ -20,6 +20,7 @@ import com.familyconnect.familyconnect.register.RegisterRepository
 import com.familyconnect.familyconnect.task.CreateTaskApiService
 import com.familyconnect.familyconnect.task.TaskRepository
 import com.familyconnect.familyconnect.task.TaskRepositoryImpl
+import com.familyconnect.familyconnect.taskGetchild.TaskApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 //Enter your local ip as subdomain instead of 192.168.1.2
-private const val BASE_URL = "http://192.168.1.6:8000"
+private const val BASE_URL = "http://192.168.56.1:8000"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -122,6 +123,16 @@ class NetworkModule {
     @Singleton
     fun provideCreateTaskApiService(retrofit: Retrofit): CreateTaskApiService =
         retrofit.create(CreateTaskApiService::class.java)
+
+    //Get Tasks
+    @Provides
+    @Singleton
+    fun provideTaskApiService(retrofit: Retrofit): TaskApiService {
+        return retrofit.create(TaskApiService::class.java)
+    }
+
+
+
 
     // Family
     @Provides

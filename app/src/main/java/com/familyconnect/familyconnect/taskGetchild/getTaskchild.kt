@@ -1,57 +1,61 @@
 package com.familyconnect.familyconnect.taskGetchild
 
-
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
-
-
-
-
-
-fun getDummyTasks(username : String?): List<TaskRequestBody> {
-    return listOf(
-        TaskRequestBody("$username", "Complete the math homework", "Alice", "Bob", "2024-04-30", 50, 1),
-        TaskRequestBody("Chores", "Wash the dishes", "Charlie", "Dave", "2024-05-01", 30, 2),
-        TaskRequestBody("Exercise", "Run 5 kilometers", "Eve", "Frank", "2024-04-29", 20, 3)
-    )
-}
-
-
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
-fun GetTaskScreenchild(username : String?) {
-    val tasks = getDummyTasks(username)  // Fetch the dummy tasks
+fun GetTaskScreenchild(
+    username: String?,
+    viewModel: TasksViewModel = hiltViewModel()
+) {
+    val tasks by viewModel.tasks.observeAsState()
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val errorMessage by viewModel.errorMessage.observeAsState()
 
-    LazyColumn(
-        modifier = Modifier.padding(16.dp)
+    LaunchedEffect(Unit) {
+        username?.let { viewModel.fetchTasks(it) }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(tasks) { task ->
-            TaskItem(task)
-            Spacer(modifier = Modifier.height(10.dp))
+        if (isLoading) {
+            Text(text = "Loading...", style = MaterialTheme.typography.bodyLarge)
+        } else if (!errorMessage.isNullOrEmpty()) {
+            Text(text = "Error: $errorMessage", color = MaterialTheme.colorScheme.error)
+        } else {
+            tasks?.let {
+                if (it.isEmpty()) {
+                    Text(text = "No tasks assigned", style = MaterialTheme.typography.bodyLarge)
+                } else {
+                    it.forEach { task ->
+                        TaskItem(task = task)
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun TaskItem(task: TaskRequestBody) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(text = "Task Name: ${task.taskName}", style = MaterialTheme.typography.titleMedium)
-        Text(text = "Description: ${task.taskDescription}", style = MaterialTheme.typography.bodyMedium)
-        Text(text = "Assigned by: ${task.taskCreatorUserName}", style = MaterialTheme.typography.bodySmall)
-        Text(text = "Assigned to: ${task.taskAssigneeUserName}", style = MaterialTheme.typography.bodySmall)
-        Text(text = "Due Date: ${task.taskDueDate}", style = MaterialTheme.typography.bodySmall)
-        Text(text = "Reward Points: ${task.taskRewardPoints}", style = MaterialTheme.typography.bodySmall)
+fun TaskItem(task: Task) {
+    Column(modifier = Modifier.padding(8.dp)) {
+        Text(text = "Task: ${task.taskName}", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Description: ${task.taskDescription}")
+        Text(text = "Due: ${task.taskDueDate}")
+        Text(text = "Points: ${task.taskRewardPoints}")
     }
 }
