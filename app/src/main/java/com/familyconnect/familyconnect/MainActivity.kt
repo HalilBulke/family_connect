@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberScreen
 import com.familyconnect.familyconnect.dashboard.DashboardScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
@@ -141,7 +142,9 @@ class MainActivity : ComponentActivity() {
                             MyFamilyScreen(username = backstackEntry.arguments?.getString("username"))
 
                         }
-
+                        composable(route = "addFamilyMember") {
+                            AddFamilyMemberScreen()
+                        }
                     }
                 }
             }
