@@ -51,6 +51,8 @@ fun MainDashboardView(
     viewModel.dashboardItems[3].route = "createFamily/$username"
     viewModel.dashboardItems[6].route = "getTaskchild/$username"
     viewModel.dashboardItems[8].route = "displayFamily/$username"
+    viewModel.dashboardItems[10].route = "showallgiventasks/$username"
+
 
     val dashboardItems = remember {
         viewModel.filterDashboardItems(role.toString() , familyId != "-1")

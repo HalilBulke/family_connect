@@ -23,6 +23,7 @@ import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.register.RegisterScreen
+import com.familyconnect.familyconnect.showallgiventasks.ShowAllGivenTasks
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
 import com.familyconnect.familyconnect.task.CreateTaskScreen
 import com.familyconnect.familyconnect.taskGetchild.GetTaskScreenchild
@@ -142,9 +143,31 @@ class MainActivity : ComponentActivity() {
                             MyFamilyScreen(username = backstackEntry.arguments?.getString("username"))
 
                         }
+
+
                         composable(route = "addFamilyMember") {
                             AddFamilyMemberScreen()
                         }
+
+
+
+
+                        //show all given tasks to parent
+                        composable(route = "showallgiventasks/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            ShowAllGivenTasks(username = backstackEntry.arguments?.getString("username"))
+
+                        }
+
+
+
+
                     }
                 }
             }
