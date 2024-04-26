@@ -1,7 +1,6 @@
 package com.familyconnect.familyconnect.maindashboard
 
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,8 +55,8 @@ fun MainDashboardView(
     viewModel.dashboardItems[6].route = "getTaskchild/$username"
     viewModel.dashboardItems[8].route = "displayFamily/$username"
     viewModel.dashboardItems[10].route = "showallgiventasks/$username"
-
-
+    viewModel.dashboardItems[12].route = "getProgresschild/$username"
+    viewModel.dashboardItems[13].route = "showallgivenprogress/$username"
     // Fetch user data
     LaunchedEffect(key1 = username) {
         viewModel.fetchUserData(username.toString())

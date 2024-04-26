@@ -20,6 +20,7 @@ import com.familyconnect.familyconnect.login.UserToken
 import com.familyconnect.familyconnect.maindashboard.DefaultMainDashboardRepository
 import com.familyconnect.familyconnect.maindashboard.MainDashboardApiService
 import com.familyconnect.familyconnect.maindashboard.MainDashboardRepository
+import com.familyconnect.familyconnect.progressGetChild.ProgressApiService
 import com.familyconnect.familyconnect.register.NetworkRegisterRepository
 import com.familyconnect.familyconnect.register.RegisterApiService
 import com.familyconnect.familyconnect.register.RegisterRepository
@@ -156,6 +157,17 @@ class NetworkModule {
     @Singleton
     fun provideCreateProgressApiService(retrofit: Retrofit): CreateProgressApiService =
         retrofit.create(CreateProgressApiService::class.java)
+
+
+    @Provides
+    @Singleton
+    fun provideProgressApiService(retrofit: Retrofit): ProgressApiService {
+        return retrofit.create(ProgressApiService::class.java)
+    }
+
+
+
+
 
 
 
