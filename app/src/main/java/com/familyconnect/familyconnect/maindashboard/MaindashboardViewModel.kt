@@ -29,7 +29,7 @@ class MainDashboardViewModel @Inject constructor(
 
     var dashboardItems = listOf(
         DashboardItem(id = 1, title = "TEMP", icon = R.drawable.ic_family_connect, route = "family_members", permittedScenarios = listOf(2, 4, 9)),
-        DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar", permittedScenarios = listOf(2, 3, 4, 9)),
+        DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar/{userName}", permittedScenarios = listOf(2, 3, 4, 9)),
         DashboardItem(id = 3, title = "Create Task", icon = R.drawable.ic_family_connect, route = "createTask", permittedScenarios = listOf(4, 9)),
         DashboardItem(id = 4, title = "Create Family", icon = R.drawable.ic_family_connect, route = "createFamily", permittedScenarios = listOf(3, 9)),
         DashboardItem(id = 5, title = "Spin Wheel", icon = R.drawable.ic_family_connect, route = "spinWheel", permittedScenarios = listOf(2, 4, 9)),

@@ -1,9 +1,11 @@
 package com.familyconnect.familyconnect
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberScreen
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
-import com.familyconnect.familyconnect.dashboard.DashboardScreen
+import com.familyconnect.familyconnect.calendar.CalendarViewModel
+import com.familyconnect.familyconnect.calendar.CalenderScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
@@ -31,10 +35,12 @@ import com.familyconnect.familyconnect.spin.SpinWheelScreen
 import com.familyconnect.familyconnect.task.CreateTaskScreen
 import com.familyconnect.familyconnect.taskGetchild.GetTaskScreenchild
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
+import com.familyconnect.familyconnect.util.DummyTasks
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -96,9 +102,15 @@ class MainActivity : ComponentActivity() {
                                 username = backstackEntry.arguments?.getString("username"))
                         }
 
-                        composable(route = "calendar") {
-                            DashboardScreen()
-
+                        composable(
+                            route = "calendar/{userName}",
+                            arguments = listOf(
+                                navArgument(name = "userName"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) {backstackEntry ->
+                            CalenderScreen(userName = backstackEntry.arguments?.getString("userName"))
                         }
 
                         composable(route = "spinWheel") {

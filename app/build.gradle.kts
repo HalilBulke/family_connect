@@ -78,6 +78,8 @@ dependencies {
     //
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0")
 
+    // The compose calendar library
+    implementation("com.kizitonwose.calendar:compose:2.5.0")
 
     // Image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
