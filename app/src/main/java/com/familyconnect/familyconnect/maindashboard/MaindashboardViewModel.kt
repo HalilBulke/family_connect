@@ -38,7 +38,10 @@ class MainDashboardViewModel @Inject constructor(
         DashboardItem(id = 8, title = "TEMP", icon = R.drawable.ic_family_connect, route = "settings", permittedScenarios = listOf(2, 3, 4, 9)),
         DashboardItem(id = 9, title = "My Family", icon = R.drawable.ic_family_connect, route = "displayFamily", permittedScenarios = listOf(2, 4, 9)),
         DashboardItem(id = 10, title = "Add Member", icon = R.drawable.ic_family_connect, route = "addFamilyMember", permittedScenarios = listOf(4, 9)),
-        DashboardItem(id = 11, title = "Show my Given Tasks", icon = R.drawable.ic_family_connect, route = "showallgiventasks", permittedScenarios = listOf(4, 9))
+        DashboardItem(id = 11, title = "Show my Given Tasks", icon = R.drawable.ic_family_connect, route = "showallgiventasks", permittedScenarios = listOf(4, 9)),
+        DashboardItem(id = 12, title = "Create Progress", icon = R.drawable.ic_family_connect, route = "createProgress", permittedScenarios = listOf(4, 9))
+
+
     )
 
     fun filterDashboardItems(role: String, hasFamily: Boolean): List<DashboardItem> {

@@ -4,6 +4,9 @@ import android.util.Log
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberRepository
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberRepositoryImpl
 import com.familyconnect.familyconnect.addfamilymember.AddMemberApiService
+import com.familyconnect.familyconnect.createprogress.CreateProgressApiService
+import com.familyconnect.familyconnect.createprogress.ProgressRepository
+import com.familyconnect.familyconnect.createprogress.ProgressRepositoryImpl
 import com.familyconnect.familyconnect.displayfamily.DisplayFamilyRepository
 import com.familyconnect.familyconnect.displayfamily.FamilyApiService
 import com.familyconnect.familyconnect.displayfamily.GetFamilyRepository
@@ -133,6 +136,27 @@ class NetworkModule {
     fun provideTaskApiService(retrofit: Retrofit): TaskApiService {
         return retrofit.create(TaskApiService::class.java)
     }
+
+
+
+
+
+
+
+
+    // Provide the implementation for the TaskRepository
+    @Provides
+    @Singleton
+    fun provideProgressRepository(createProgressApiService: CreateProgressApiService): ProgressRepository {
+        return ProgressRepositoryImpl(createProgressApiService)
+    }
+
+    // Provide the API service to create tasks
+    @Provides
+    @Singleton
+    fun provideCreateProgressApiService(retrofit: Retrofit): CreateProgressApiService =
+        retrofit.create(CreateProgressApiService::class.java)
+
 
 
 
