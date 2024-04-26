@@ -1,8 +1,13 @@
 package com.familyconnect.familyconnect.maindashboard
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.login.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DashboardItem(
@@ -15,7 +20,13 @@ data class DashboardItem(
 
 
 @HiltViewModel
-class MainDashboardViewModel @Inject constructor() : ViewModel() {
+class MainDashboardViewModel @Inject constructor(
+    private val mainDashboardRepository: MainDashboardRepository
+) : ViewModel() {
+
+    private val _userData = MutableLiveData<User>()
+    val userData: LiveData<User> = _userData
+
     var dashboardItems = listOf(
         DashboardItem(id = 1, title = "TEMP", icon = R.drawable.ic_family_connect, route = "family_members", permittedScenarios = listOf(2, 4, 9)),
         DashboardItem(id = 2, title = "Calendar", icon = R.drawable.ic_family_connect, route = "calendar", permittedScenarios = listOf(2, 3, 4, 9)),
@@ -40,6 +51,23 @@ class MainDashboardViewModel @Inject constructor() : ViewModel() {
             else -> 0 // Default scenario
         }
         return dashboardItems.filter { it.permittedScenarios.contains(currentScenario) }
+    }
+
+    fun fetchUserData(username: String) {
+        viewModelScope.launch {
+            try {
+                // Fetch user data using the repository
+                val response = mainDashboardRepository.getUser(username)
+                if (response.isSuccessful) {
+                    // Update the LiveData with the user data
+                    _userData.value = response.body()
+                } else {
+                    // Handle error response
+                }
+            } catch (e: Exception) {
+                // Handle exception
+            }
+        }
     }
 }
 

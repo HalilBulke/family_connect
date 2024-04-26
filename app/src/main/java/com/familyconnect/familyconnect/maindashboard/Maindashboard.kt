@@ -1,6 +1,7 @@
 package com.familyconnect.familyconnect.maindashboard
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +58,17 @@ fun MainDashboardView(
     viewModel.dashboardItems[10].route = "showallgiventasks/$username"
 
 
-    val dashboardItems = remember {
-        viewModel.filterDashboardItems(role.toString() , familyId != "-1")
+    // Fetch user data
+    LaunchedEffect(key1 = username) {
+        viewModel.fetchUserData(username.toString())
+    }
+
+    // Observe user data changes
+    val userData by viewModel.userData.observeAsState()
+
+    // Compute dashboard items based on user data
+    val dashboardItems = remember(userData) {
+        viewModel.filterDashboardItems(role.toString(), userData?.familyId != -1)
     }
 
     Scaffold(

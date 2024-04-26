@@ -14,6 +14,9 @@ import com.familyconnect.familyconnect.login.LoginApiService
 import com.familyconnect.familyconnect.login.LoginRepository
 import com.familyconnect.familyconnect.login.NetworkLoginRepository
 import com.familyconnect.familyconnect.login.UserToken
+import com.familyconnect.familyconnect.maindashboard.DefaultMainDashboardRepository
+import com.familyconnect.familyconnect.maindashboard.MainDashboardApiService
+import com.familyconnect.familyconnect.maindashboard.MainDashboardRepository
 import com.familyconnect.familyconnect.register.NetworkRegisterRepository
 import com.familyconnect.familyconnect.register.RegisterApiService
 import com.familyconnect.familyconnect.register.RegisterRepository
@@ -169,5 +172,18 @@ class NetworkModule {
     @Singleton
     fun provideAddMemberApiService(retrofit: Retrofit): AddMemberApiService {
         return retrofit.create(AddMemberApiService::class.java)
+    }
+
+    //dashboard
+    @Provides
+    @Singleton
+    fun provideMainDashboardRepository(mainDashboardApiService: MainDashboardApiService): MainDashboardRepository {
+        return DefaultMainDashboardRepository(mainDashboardApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMainDashboardApiService(retrofit: Retrofit): MainDashboardApiService {
+        return retrofit.create(MainDashboardApiService::class.java)
     }
 }
