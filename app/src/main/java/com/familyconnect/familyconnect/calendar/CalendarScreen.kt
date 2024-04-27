@@ -66,21 +66,27 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CalenderScreen(
+fun CalendarScreen(
     userName: String?,
     viewModel: CalendarViewModel = hiltViewModel(),
+    onOkButtonClicked: () -> Unit,
+    onReTryButtonClicked:() -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     when(uiState) {
         is CalenderUiState.Error -> {
-            ErrorScreen(onClickFirstButton = { /*TODO*/ }, onClickSecondButton = { /*TODO*/ })
+            ErrorScreen(
+                onClickFirstButton = { onOkButtonClicked() },
+                onClickSecondButton = { onReTryButtonClicked()
+                }
+            )
         }
         is CalenderUiState.Loading -> {
             LoadingScreen()
         }
         is CalenderUiState.Success -> {
-            CalenderPage(
+            CalendarPage(
                 tasks = (uiState as CalenderUiState.Success).calenderList.orEmpty(),
                 onEvent = {},
                 onMainEvent = {},
@@ -94,7 +100,7 @@ fun CalenderScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun CalenderPage(
+fun CalendarPage(
     tasks: List<Task>,
     onEvent: (HomeScreenEvent) -> Unit,
     onMainEvent: (MainEvent) -> Unit,
@@ -103,7 +109,7 @@ fun CalenderPage(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    var calenderView by remember { mutableStateOf(CalenderView.MONTHLY) }
+    var calendarView by remember { mutableStateOf(CalendarView.MONTHLY) }
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() }
 
     // monthly calender
@@ -129,7 +135,7 @@ fun CalenderPage(
 
     var selectedDay by remember { mutableStateOf<LocalDate>(currentDate) }
     var currentMonthTitle by remember { mutableStateOf(currentMonth.month) }
-    currentMonthTitle = if (calenderView == CalenderView.WEEKLY)
+    currentMonthTitle = if (calendarView == CalendarView.WEEKLY)
         weekState.firstVisibleWeek.days[0].date.month
     else
         monthState.lastVisibleMonth.yearMonth.month
@@ -163,7 +169,7 @@ fun CalenderPage(
                 IconButton(onClick = {
                     scope.launch {
                         selectedDay = currentDate
-                        if (calenderView == CalenderView.WEEKLY)
+                        if (calendarView == CalendarView.WEEKLY)
                             weekState.animateScrollToWeek(currentDate)
                         else
                             monthState.animateScrollToMonth(currentMonth)
@@ -173,15 +179,15 @@ fun CalenderPage(
                 }
 
                 IconButton(onClick = {
-                    calenderView = if (calenderView == CalenderView.WEEKLY)
-                        CalenderView.MONTHLY
+                    calendarView = if (calendarView == CalendarView.WEEKLY)
+                        CalendarView.MONTHLY
                     else
-                        CalenderView.WEEKLY
+                        CalendarView.WEEKLY
 
-                    onMainEvent(MainEvent.UpdateCalenderView(calenderView, context))
+                    onMainEvent(MainEvent.UpdateCalenderView(calendarView, context))
                 }) {
                     val currentIcon =
-                        if (calenderView == CalenderView.WEEKLY) Icons.Default.DateRange else Icons.Default.Menu
+                        if (calendarView == CalendarView.WEEKLY) Icons.Default.DateRange else Icons.Default.Menu
                     Icon(imageVector = currentIcon, contentDescription = null)
                 }
             }
@@ -207,7 +213,7 @@ fun CalenderPage(
 
         Column(modifier = Modifier.padding(innerPadding)) {
 
-            AnimatedVisibility(visible = calenderView == CalenderView.WEEKLY) {
+            AnimatedVisibility(visible = calendarView == CalendarView.WEEKLY) {
                 WeekCalendar(
                     modifier = Modifier.padding(horizontal = 10.dp),
                     state = weekState,
@@ -223,7 +229,7 @@ fun CalenderPage(
                 )
             }
 
-            AnimatedVisibility(visible = calenderView == CalenderView.MONTHLY) {
+            AnimatedVisibility(visible = calendarView == CalendarView.MONTHLY) {
                 HorizontalCalendar(
                     modifier = Modifier.padding(horizontal = 10.dp),
                     state = monthState,
@@ -305,5 +311,5 @@ fun CalenderPage(
 @Composable
 fun CalenderScreenPreview() {
     val tasks = DummyTasks.dummyTasks
-    CalenderPage(tasks, {}, {}, {}, {})
+    CalendarPage(tasks, {}, {}, {}, {})
 }

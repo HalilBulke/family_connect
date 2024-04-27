@@ -7,7 +7,7 @@ import com.familyconnect.familyconnect.addfamilymember.AddMemberApiService
 import com.familyconnect.familyconnect.createprogress.CreateProgressApiService
 import com.familyconnect.familyconnect.createprogress.ProgressRepository
 import com.familyconnect.familyconnect.createprogress.ProgressRepositoryImpl
-import com.familyconnect.familyconnect.calendar.CalenderApiService
+import com.familyconnect.familyconnect.calendar.CalendarApiService
 import com.familyconnect.familyconnect.calendar.CalenderRepository
 import com.familyconnect.familyconnect.calendar.NetworkCalenderRepository
 import com.familyconnect.familyconnect.displayfamily.DisplayFamilyRepository
@@ -228,13 +228,13 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCalender(apiService: CalenderApiService): CalenderRepository {
+    fun provideCalender(apiService: CalendarApiService): CalenderRepository {
         return NetworkCalenderRepository(apiService)
     }
 
     @Provides
     @Singleton
-    fun provideCalenderApiService(retrofit: Retrofit): CalenderApiService {
-        return retrofit.create(CalenderApiService::class.java)
+    fun provideCalenderApiService(retrofit: Retrofit): CalendarApiService {
+        return retrofit.create(CalendarApiService::class.java)
     }
 }

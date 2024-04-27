@@ -1,6 +1,5 @@
 package com.familyconnect.familyconnect.calendar
 
-import com.familyconnect.familyconnect.task.Task
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import javax.inject.Inject
@@ -10,10 +9,10 @@ interface CalenderRepository {
 }
 
 class NetworkCalenderRepository @Inject constructor(
-    private val calenderApiService: CalenderApiService
+    private val calendarApiService: CalendarApiService
 ) : CalenderRepository {
     override suspend fun getCalendar(userName: String): Response<List<CalenderResponse>> {
-        return calenderApiService.getCalendar(userName)
+        return calendarApiService.getCalendar(userName)
     }
 }
 

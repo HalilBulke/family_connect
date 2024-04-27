@@ -1,6 +1,6 @@
 package com.familyconnect.familyconnect.calendar
 
-enum class CalenderView {
+enum class CalendarView {
     WEEKLY,
     MONTHLY
 }

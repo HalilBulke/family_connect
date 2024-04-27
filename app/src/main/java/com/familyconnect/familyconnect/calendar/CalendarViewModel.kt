@@ -1,6 +1,7 @@
 package com.familyconnect.familyconnect.calendar
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -34,9 +35,16 @@ class CalendarViewModel @Inject constructor(
     val uiState: StateFlow<CalenderUiState> = _uiState
 
     private val userName: String
-        get() = savedStateHandle.get<String>("userName").orEmpty()
+        get() = savedStateHandle.get<String>("username").orEmpty()
+
     init {
+         Log.d("username", userName)
          loadTasks(userName = userName)
+    }
+
+    fun retry() {
+        Log.d("retry", userName)
+        loadTasks(userName = userName)
     }
 
     private fun loadTasks(userName: String) {
@@ -71,6 +79,8 @@ class CalendarViewModel @Inject constructor(
         val odt = OffsetDateTime.parse(dateString, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
         // Sadece tarih bilgisini alır.
+        Log.d("DATENow",LocalDate.now().toString())
+        Log.d("DATECreated",odt.toLocalDate().toString())
         return odt.toLocalDate()
     }
 
@@ -79,6 +89,7 @@ class CalendarViewModel @Inject constructor(
         val odt = OffsetDateTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
         // Saat bilgisini LocalTime olarak alır.
+
         return odt.toLocalTime()
     }
 }

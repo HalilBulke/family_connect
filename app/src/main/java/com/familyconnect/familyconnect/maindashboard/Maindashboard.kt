@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.familyconnect.familyconnect.KEY_USER_NAME
 import com.familyconnect.familyconnect.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +52,7 @@ fun MainDashboardView(
 //    Log.d("familyID", familyId.toString())
 //    Log.d("NAME", name.toString())
 //    Log.d("UserName", username.toString())
+    viewModel.dashboardItems[1].route = "calendar/$username"
     viewModel.dashboardItems[3].route = "createFamily/$username"
     viewModel.dashboardItems[6].route = "getTaskchild/$username"
     viewModel.dashboardItems[8].route = "displayFamily/$username"
@@ -151,7 +153,8 @@ fun DashboardItemCard(
     Card(
         modifier = modifier
             .padding(8.dp)
-            .clickable { navController.navigate(item.route) },
+            .clickable { navController.navigate(item.route)},
+                //.replace("{$KEY_USER_NAME}", "tokibokit@gmail.com")) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(

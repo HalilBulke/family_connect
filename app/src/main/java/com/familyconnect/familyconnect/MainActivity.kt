@@ -21,8 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberScreen
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
+import com.familyconnect.familyconnect.calendar.CalendarScreen
 import com.familyconnect.familyconnect.calendar.CalendarViewModel
-import com.familyconnect.familyconnect.calendar.CalenderScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
@@ -35,8 +35,9 @@ import com.familyconnect.familyconnect.spin.SpinWheelScreen
 import com.familyconnect.familyconnect.task.CreateTaskScreen
 import com.familyconnect.familyconnect.taskGetchild.GetTaskScreenchild
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
-import com.familyconnect.familyconnect.util.DummyTasks
 import dagger.hilt.android.AndroidEntryPoint
+
+const val KEY_USER_NAME = "userName"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -103,14 +104,21 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = "calendar/{userName}",
+                            //route = "calendar?${KEY_USER_NAME}=${KEY_USER_NAME}",
+                            route = "calendar/{username}",
                             arguments = listOf(
-                                navArgument(name = "userName"){
+                                navArgument("username"){
                                     type = NavType.StringType
                                 }
                             )
                         ) {backstackEntry ->
-                            CalenderScreen(userName = backstackEntry.arguments?.getString("userName"))
+                            val viewModel: CalendarViewModel = hiltViewModel()
+
+                            CalendarScreen(
+                                userName = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { viewModel.retry() }
+                            )
                         }
 
                         composable(route = "spinWheel") {
