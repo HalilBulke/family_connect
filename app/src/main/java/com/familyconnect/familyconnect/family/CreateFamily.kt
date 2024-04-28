@@ -14,14 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
-import com.familyconnect.familyconnect.commoncomposables.makeToast
+import com.familyconnect.familyconnect.util.makeToast
 
 @Composable
 fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel(),
                        username : String?
 ) {
     var familyName by remember { mutableStateOf("") }
-    var familyCreatorUserName by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
     Column(

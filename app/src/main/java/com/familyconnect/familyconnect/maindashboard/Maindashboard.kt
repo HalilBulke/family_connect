@@ -51,15 +51,7 @@ fun MainDashboardView(
 //    Log.d("familyID", familyId.toString())
 //    Log.d("NAME", name.toString())
 //    Log.d("UserName", username.toString())
-    viewModel.dashboardItems[0].route = "calendar/$username"
-    viewModel.dashboardItems[1].route = "createTask/$username"
-    viewModel.dashboardItems[2].route = "createFamily/$username"
-    viewModel.dashboardItems[4].route = "getTaskchild/$username"
-    viewModel.dashboardItems[5].route = "displayFamily/$username"
-    viewModel.dashboardItems[7].route = "showallgiventasks/$username"
-    viewModel.dashboardItems[8].route = "createProgress/$username"
-    viewModel.dashboardItems[9].route = "getProgresschild/$username"
-    viewModel.dashboardItems[10].route = "showallgivenprogress/$username"
+
     // Fetch user data
     LaunchedEffect(key1 = username) {
         viewModel.fetchUserData(username.toString())
@@ -67,6 +59,25 @@ fun MainDashboardView(
 
     // Observe user data changes
     val userData by viewModel.userData.observeAsState()
+
+    var famID = familyId
+
+    if (userData?.familyId != null) {
+        famID = userData?.familyId.toString()
+    }
+
+
+    viewModel.dashboardItems[0].route = "calendar/$username"
+    viewModel.dashboardItems[1].route = "createTask/$username"
+    viewModel.dashboardItems[2].route = "createFamily/$username"
+    viewModel.dashboardItems[4].route = "getTaskchild/$username"
+    viewModel.dashboardItems[5].route = "displayFamily/$username"
+    viewModel.dashboardItems[6].route = "addFamilyMember/$famID"
+    viewModel.dashboardItems[7].route = "showallgiventasks/$username"
+    viewModel.dashboardItems[8].route = "createProgress/$username"
+    viewModel.dashboardItems[9].route = "getProgresschild/$username"
+    viewModel.dashboardItems[10].route = "showallgivenprogress/$username"
+
 
     // Compute dashboard items based on user data
     val dashboardItems = remember(userData) {

@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberScreen
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberViewModel
 import com.familyconnect.familyconnect.calendar.CalendarScreen
 import com.familyconnect.familyconnect.calendar.CalendarViewModel
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
@@ -221,8 +222,16 @@ class MainActivity : ComponentActivity() {
                         }
 
 
-                        composable(route = "addFamilyMember") {
-                            AddFamilyMemberScreen()
+                        composable(route = "addFamilyMember/{familyId}",
+                            arguments = listOf(
+                                navArgument(name = "familyId"){
+                                    type = NavType.StringType
+                                }
+                            )) {backstackEntry ->
+                            val viewModel: AddFamilyMemberViewModel = hiltViewModel()
+                            AddFamilyMemberScreen(familyId = backstackEntry.arguments?.getString("familyId"),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { viewModel.retry() })
                         }
 
 

@@ -1,4 +1,4 @@
-package com.familyconnect.familyconnect.commoncomposables
+package com.familyconnect.familyconnect.util
 
 import android.content.Context
 import android.os.Build

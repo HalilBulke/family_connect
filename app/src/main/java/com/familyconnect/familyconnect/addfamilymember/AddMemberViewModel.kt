@@ -16,8 +16,14 @@ class AddFamilyMemberViewModel @Inject constructor(
 
     private val _addFamilyMemberResult = MutableLiveData<AddFamilyMemberResponse>()
     val addFamilyMemberResult: LiveData<AddFamilyMemberResponse> = _addFamilyMemberResult
+    var addFamilyMemberRequest = AddFamilyMemberRequest(0, listOf())
+    fun retry() {
+        Log.d("retry", addFamilyMemberRequest.toString())
+        addFamilyMember(addFamilyMemberRequest)
+    }
 
     fun addFamilyMember(request: AddFamilyMemberRequest) {
+        addFamilyMemberRequest = request
         viewModelScope.launch {
             try {
                 val response = addFamilyMemberRepository.addFamilyMember(request)
