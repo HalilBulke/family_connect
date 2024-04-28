@@ -36,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.familyconnect.familyconnect.KEY_USER_NAME
 import com.familyconnect.familyconnect.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,10 +52,12 @@ fun MainDashboardView(
 //    Log.d("NAME", name.toString())
 //    Log.d("UserName", username.toString())
     viewModel.dashboardItems[0].route = "calendar/$username"
+    viewModel.dashboardItems[1].route = "createTask/$username"
     viewModel.dashboardItems[2].route = "createFamily/$username"
     viewModel.dashboardItems[4].route = "getTaskchild/$username"
     viewModel.dashboardItems[5].route = "displayFamily/$username"
     viewModel.dashboardItems[7].route = "showallgiventasks/$username"
+    viewModel.dashboardItems[8].route = "createProgress/$username"
     viewModel.dashboardItems[9].route = "getProgresschild/$username"
     viewModel.dashboardItems[10].route = "showallgivenprogress/$username"
     // Fetch user data

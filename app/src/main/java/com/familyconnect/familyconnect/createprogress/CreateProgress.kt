@@ -20,12 +20,12 @@ import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 
 @Composable
-fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel()) {
+fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), username: String) {
     var progressName by remember { mutableStateOf("") }
     var quota by remember { mutableStateOf("") }
     var currentStatus by remember { mutableStateOf("") }
     var dueDate by remember { mutableStateOf("") }
-    var createdBy by remember { mutableStateOf("") }
+    var createdBy by remember { mutableStateOf(username) }  // Use provided username
     var assignedTo by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
@@ -39,7 +39,7 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel()) {
         AppInputField(
             value = progressName,
             onValueChange = { progressName = it },
-            placeholderText = "Progress Name",
+            placeholderText = "Progresssssssssssssssss Name",
             isResponseError = false
         )
         AppInputField(
@@ -58,12 +58,6 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel()) {
             value = dueDate,
             onValueChange = { dueDate = it },
             placeholderText = "Due Date (YYYY-MM-DD)",
-            isResponseError = false
-        )
-        AppInputField(
-            value = createdBy,
-            onValueChange = { createdBy = it },
-            placeholderText = "Created By",
             isResponseError = false
         )
         AppInputField(
@@ -97,5 +91,3 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel()) {
         )
     }
 }
-
-

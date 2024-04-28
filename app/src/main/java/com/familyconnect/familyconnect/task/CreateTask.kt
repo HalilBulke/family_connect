@@ -20,10 +20,10 @@ import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 
 @Composable
-fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel()) {
+fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel(), username: String) {
     var taskName by remember { mutableStateOf("") }
     var taskDescription by remember { mutableStateOf("") }
-    var taskCreatorUserName by remember { mutableStateOf("") }
+    var taskCreatorUserName by remember { mutableStateOf(username) }  // Directly using the passed username, no need to show it in UI
     var taskAssigneeUserName by remember { mutableStateOf("") }
     var taskDueDate by remember { mutableStateOf("") }
     var taskRewardPoints by remember { mutableStateOf("") }
@@ -49,12 +49,6 @@ fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel()) {
             isResponseError = false
         )
         AppInputField(
-            value = taskCreatorUserName,
-            onValueChange = { taskCreatorUserName = it },
-            placeholderText = "Creator's username",
-            isResponseError = false
-        )
-        AppInputField(
             value = taskAssigneeUserName,
             onValueChange = { taskAssigneeUserName = it },
             placeholderText = "Assignee's username",
@@ -70,8 +64,7 @@ fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel()) {
             value = taskRewardPoints,
             onValueChange = { taskRewardPoints = it },
             placeholderText = "Reward Points",
-            isResponseError = false,
-            isPassword = false  // Assuming this is a numeric input, consider changing input type if needed
+            isResponseError = false
         )
         Spacer(modifier = Modifier.height(16.dp))
         AppButton(
@@ -82,7 +75,7 @@ fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel()) {
                 val task = CreateTaskRequestBody(
                     taskName = taskName,
                     taskDescription = taskDescription,
-                    taskCreatorUserName = taskCreatorUserName,
+                    taskCreatorUserName = taskCreatorUserName,  // This value is now entirely internal
                     taskAssigneeUserName = taskAssigneeUserName,
                     taskDueDate = taskDueDate,
                     taskRewardPoints.toIntOrNull() ?: 0,
@@ -97,9 +90,5 @@ fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel()) {
                 })
             }
         )
-
-
-
     }
 }
-
