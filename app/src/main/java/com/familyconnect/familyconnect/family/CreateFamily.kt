@@ -9,10 +9,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
+import com.familyconnect.familyconnect.commoncomposables.makeToast
 
 @Composable
 fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel(),
@@ -35,13 +37,8 @@ fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel(),
             placeholderText = "Enter family name",
             isResponseError = false
         )
-        AppInputField(
-            value = username.toString(),
-            onValueChange = { familyCreatorUserName = it },
-            placeholderText = "Creator's username",
-            isResponseError = false
-        )
         Spacer(modifier = Modifier.height(16.dp))
+        val context = LocalContext.current
         AppButton(
             buttonText = "Create Family",
             isLoading = isLoading,
@@ -53,7 +50,7 @@ fun CreateFamilyScreen(viewModel: CreateFamilyViewModel = hiltViewModel(),
                 )
                 viewModel.createFamily(family, onSuccess = {
                     isLoading = false
-                    // TODO
+                    makeToast(context, "Family $familyName Created Successfully")
                 }, onError = { error ->
 
                     // TODO
