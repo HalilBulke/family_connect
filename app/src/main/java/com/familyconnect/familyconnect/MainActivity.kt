@@ -129,41 +129,32 @@ class MainActivity : ComponentActivity() {
 
 
 
-                        composable(
-                            route = "createTask/{username}",
+
+
+                        composable(route = "createTask/{username}",
                             arguments = listOf(
-                                navArgument("username") {
+                                navArgument(name = "username"){
                                     type = NavType.StringType
-                                    nullable = false  // Ensure username is expected to be non-null
                                 }
                             )
-                        ) { backstackEntry ->
-                            val username = backstackEntry.arguments?.getString("username")
-                            if (username != null) {
-                                CreateTaskScreen(username = username)
-                            } else {
-                                // Handle the case where username is null
-                                // This might involve showing an error message or redirecting the user
-                            }
+                        )
+                        {backstackEntry ->
+                            CreateTaskScreen(username = backstackEntry.arguments?.getString("username"))
+
+                        }
+                        composable(route = "createProgress/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            CreateProgressScreen(username = backstackEntry.arguments?.getString("username"))
+
                         }
 
-                        composable(
-                            route = "createProgress/{username}",
-                            arguments = listOf(
-                                navArgument("username") {
-                                    type = NavType.StringType
-                                    nullable = false  // Ensure username is expected to be non-null
-                                }
-                            )
-                        ) { backstackEntry ->
-                            val username = backstackEntry.arguments?.getString("username")
-                            if (username != null) {
-                                CreateProgressScreen(username = username)
-                            } else {
-                                // Handle the case where username is null
-                                // This might involve showing an error message or redirecting the user
-                            }
-                        }
+
 
 
 

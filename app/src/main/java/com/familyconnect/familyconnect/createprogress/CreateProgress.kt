@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,9 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
+import com.familyconnect.familyconnect.commoncomposables.DropDownFun
 
 @Composable
-fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), username: String) {
+fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), username: String?) {
     var progressName by remember { mutableStateOf("") }
     var quota by remember { mutableStateOf("") }
     var currentStatus by remember { mutableStateOf("") }
@@ -28,6 +31,19 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), u
     var createdBy by remember { mutableStateOf(username) }  // Use provided username
     var assignedTo by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+
+    val familyData by viewModel.familyData.observeAsState()
+    val isLoading2 by viewModel.isLoading2.observeAsState()
+    val errorMessage by viewModel.errorMessage.observeAsState()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFamilyMembers(username.toString())
+    }
+    val userList = familyData?.familyMembers //user list
+
+
+
 
     Column(
         modifier = Modifier
@@ -39,7 +55,7 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), u
         AppInputField(
             value = progressName,
             onValueChange = { progressName = it },
-            placeholderText = "Progresssssssssssssssss Name",
+            placeholderText = "Progress Name",
             isResponseError = false
         )
         AppInputField(
@@ -60,12 +76,19 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), u
             placeholderText = "Due Date (YYYY-MM-DD)",
             isResponseError = false
         )
-        AppInputField(
-            value = assignedTo,
-            onValueChange = { assignedTo = it },
-            placeholderText = "Assigned To",
-            isResponseError = false
-        )
+
+        if (userList != null) {
+            DropDownFun(
+                userList = userList,
+                selectedUser = assignedTo,
+                onValueChange = { selectedUser ->
+                    assignedTo = selectedUser
+                }
+            )
+        }
+
+
+
         Spacer(modifier = Modifier.height(16.dp))
         AppButton(
             buttonText = "Create Progress",
@@ -77,7 +100,7 @@ fun CreateProgressScreen(viewModel: CreateProgressViewModel = hiltViewModel(), u
                     quota = quota.toIntOrNull() ?: 0,
                     currentStatus = currentStatus.toIntOrNull() ?: 0,
                     dueDate = dueDate,
-                    createdBy = createdBy,
+                    createdBy = createdBy.toString(),
                     assignedTo = assignedTo
                 )
                 viewModel.addProgress(progress, onSuccess = {
