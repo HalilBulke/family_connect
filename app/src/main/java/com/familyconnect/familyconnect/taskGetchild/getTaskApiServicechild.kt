@@ -7,12 +7,17 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface TaskApiService {
-    @GET("task/getTasks/{username}")
-    suspend fun getTasksByUsername(@Path("username") username: String): Response<List<Task>>
 
+    @GET("/task/getTasks/{username}")
+    suspend fun getTasksByUsername(@Path("username") username: String): Response<List<Task>>
 
     @POST("/task/pendingTask/{username}/{taskId}")
     fun setTaskPending(@Path("username") username: String, @Path("taskId") taskId: Int): Call<Void>
 
+    @POST("/task/completeTask/{username}/{taskId}")
+    fun completeTask(@Path("username") username: String, @Path("taskId") taskId: Int): Call<Void>
+
+    @POST("/task/rejectTask/{username}/{taskId}")
+    fun rejectTask(@Path("username") username: String, @Path("taskId") taskId: Int): Call<Void>
 
 }

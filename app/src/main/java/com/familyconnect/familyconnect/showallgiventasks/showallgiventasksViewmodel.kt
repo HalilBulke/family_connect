@@ -12,6 +12,9 @@ import com.familyconnect.familyconnect.taskGetchild.Task
 import com.familyconnect.familyconnect.taskGetchild.TaskApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -66,4 +69,49 @@ class MyFamilyViewModel2 @Inject constructor(
             }
         }
     }
+
+
+
+    fun completeTask(userName: String, taskId: Int) {
+        taskApiService.completeTask(userName, taskId).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    // Handle successful task completion, e.g., refresh data
+                    Log.d("ViewModel", "Task completed successfully")
+                } else {
+                    // Handle errors
+                    Log.e("ViewModel", "Failed to complete task")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                // Handle network failure
+                Log.e("ViewModel", "Network error on task completion", t)
+            }
+        })
+    }
+
+    fun rejectTask(userName: String, taskId: Int) {
+        taskApiService.rejectTask(userName, taskId).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    // Handle successful task rejection
+                    Log.d("ViewModel", "Task rejected successfully")
+                } else {
+                    // Handle errors
+                    Log.e("ViewModel", "Failed to reject task")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                // Handle network failure
+                Log.e("ViewModel", "Network error on task rejection", t)
+            }
+        })
+    }
+
+
+
+
+
 }
