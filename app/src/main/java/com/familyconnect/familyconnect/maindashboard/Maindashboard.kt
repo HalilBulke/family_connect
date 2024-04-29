@@ -2,8 +2,11 @@ package com.familyconnect.familyconnect.maindashboard
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
@@ -31,9 +37,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.familyconnect.familyconnect.R
@@ -85,16 +97,18 @@ fun MainDashboardView(
     }
 
     Scaffold(
-        bottomBar = { BottomNavigationBar() }
+        //bottomBar = { BottomNavigationBar() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.Top
         ) {
+            WelcomeMessage(name.toString())
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_s)))
             if (dashboardItems.isEmpty()) {
-                FamilyPhotoPlaceholder()
+                FamilyPhoto()
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -111,7 +125,7 @@ fun MainDashboardView(
                     }
                 }
             } else {
-                FamilyPhotoPlaceholder()
+                FamilyPhoto()
                 DashboardItemsGrid(
                     navController = navController,
                     items = dashboardItems
@@ -129,6 +143,18 @@ fun DashboardItemsGrid(
     items: List<DashboardItem>,
     modifier: Modifier = Modifier
 ) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "PAGES",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.padding(top = 16.dp)
+        )
+    }
     LazyColumn(
         modifier = modifier
     ) {
@@ -165,7 +191,7 @@ fun DashboardItemCard(
     Card(
         modifier = modifier
             .padding(8.dp)
-            .clickable { navController.navigate(item.route)},
+            .clickable { navController.navigate(item.route) },
                 //.replace("{$KEY_USER_NAME}", "tokibokit@gmail.com")) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -176,10 +202,10 @@ fun DashboardItemCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
+            Image(
                 painter = painterResource(id = item.icon),
                 contentDescription = item.title,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(96.dp)
             )
             Text(
                 text = item.title,
@@ -209,20 +235,79 @@ fun BottomBarIcon(
     )
 }
 
+@Composable
+fun FamilyPhoto() {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+    LazyRow {
+        item {
+            Image(
+                painter = painterResource(id = R.drawable.family222),
+                contentDescription = "Family photo 1",
+                modifier = Modifier
+                    .width(screenWidth)
+                    .height(200.dp)
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            Image(
+                painter = painterResource(id = R.drawable.family111),
+                contentDescription = "Family photo 2",
+                modifier = Modifier
+                    .width(screenWidth)
+                    .height(200.dp)
+                    .padding(horizontal = 8.dp)
+            )
+        }
+        item {
+            Image(
+                painter = painterResource(id = R.drawable.family333),
+                contentDescription = "Family photo 3",
+                modifier = Modifier
+                    .width(screenWidth)
+                    .height(200.dp)
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
 
 @Composable
-fun FamilyPhotoPlaceholder() {
-    // Assuming you have a drawable named 'ic_family_placeholder'
-    Image(
-        painter = painterResource(id = R.drawable.ic_family_connect),
-        contentDescription = "Family photo placeholder",
+fun WelcomeMessage(name: String) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp) // Or whatever height you prefer
-    )
+            .padding(top = 8.dp)
+            .padding(horizontal = 8.dp)
+            .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .background(color = Color(0xFFE0FFFF))
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_family_connect),
+                contentDescription = "App Icon",
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = "WELCOME $name!",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color.Black,
+            )
+        }
+    }
 }
 
 
 
 
-// Note: Make sure to include the corresponding icons in your drawable resource folder and replace the placeholder IDs.
+
