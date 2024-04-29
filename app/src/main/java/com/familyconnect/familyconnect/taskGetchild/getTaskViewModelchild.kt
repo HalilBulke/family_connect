@@ -1,5 +1,6 @@
 package com.familyconnect.familyconnect.taskGetchild
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,6 +41,23 @@ class TasksViewModel @Inject constructor(
                 _errorMessage.value = "An error occurred: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+    fun completeTask(username: String, taskId: Int) {
+        viewModelScope.launch {
+            try {
+
+                Log.d("completeTask", "Completing task with taskId: $taskId")
+                val response = taskRepository.setTaskPending(username, taskId)
+                if (response.isSuccessful) {
+                    // Handle successful task completion, maybe update the UI or task list
+                    fetchTasks(username)  // Refresh the list or handle UI update
+                } else {
+                    _errorMessage.value = "Failed to complete task: ${response.message()}"
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "An error occurred: ${e.localizedMessage}"
             }
         }
     }

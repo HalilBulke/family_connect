@@ -1,7 +1,10 @@
 package com.familyconnect.familyconnect.taskGetchild
 
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -9,13 +12,27 @@ interface GetTasksRepository {
     suspend fun getTasksByUsername(userName: String): Response<List<Task>>
 }
 
+
+
+
+
 class TaskRepository @Inject constructor(
     private val taskApiService: TaskApiService
 ) : GetTasksRepository {
     override suspend fun getTasksByUsername(userName: String): Response<List<Task>> {
         return taskApiService.getTasksByUsername(userName)
     }
+
+    suspend fun setTaskPending(username: String, taskId: Int): Response<Void> {
+        // This will now properly suspend and not block the main thread
+        return withContext(Dispatchers.IO) {
+            Log.d("", "$username , $taskId  ")
+            taskApiService.setTaskPending(username, taskId).execute()
+        }
+    }
 }
+
+
 
 
 
@@ -25,6 +42,8 @@ data class Task(
     @SerializedName("taskCreatorUserName") val taskCreatorUserName: String,
     @SerializedName("taskAssigneeUserName") val taskAssigneeUserName: String,
     @SerializedName("taskDueDate") val taskDueDate: String,
+    @SerializedName("id") val taskId: Int,
+    @SerializedName("taskStatus") val status:String?,
     @SerializedName("taskRewardPoints") val taskRewardPoints: Int,
-    @SerializedName("taskId") val taskId: Int
+
 )
