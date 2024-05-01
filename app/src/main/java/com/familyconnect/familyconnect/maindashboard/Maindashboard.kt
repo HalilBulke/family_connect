@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
@@ -90,6 +92,8 @@ fun MainDashboardView(
     viewModel.dashboardItems[9].route = "getProgresschild/$username"
     viewModel.dashboardItems[10].route = "showallgivenprogress/$username"
 
+    viewModel.profileDashboardItem.route = "profile/$username"
+
 
     // Compute dashboard items based on user data
     val dashboardItems = remember(userData) {
@@ -105,7 +109,9 @@ fun MainDashboardView(
                 .padding(paddingValues),
             verticalArrangement = Arrangement.Top
         ) {
-            WelcomeMessage(name.toString())
+            WelcomeMessage(userData?.name.toString(), viewModel.profileDashboardItem){
+                navController.navigate(viewModel.profileDashboardItem.route)
+            }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.spacing_s)))
             if (dashboardItems.isEmpty()) {
                 FamilyPhoto()
@@ -193,6 +199,9 @@ fun DashboardItemCard(
             .padding(8.dp)
             .clickable { navController.navigate(item.route) },
                 //.replace("{$KEY_USER_NAME}", "tokibokit@gmail.com")) },
+        colors = CardDefaults.cardColors(
+            containerColor = item.color,
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -276,7 +285,7 @@ fun FamilyPhoto() {
 }
 
 @Composable
-fun WelcomeMessage(name: String) {
+fun WelcomeMessage(name: String, item: DashboardItem, onProfileClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -289,23 +298,40 @@ fun WelcomeMessage(name: String) {
         Row(
             modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_family_connect),
-                contentDescription = "App Icon",
-                modifier = Modifier.size(64.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = "WELCOME $name!",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_family_connect),
+                    contentDescription = "App Icon",
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clickable(onClick = {})
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "WELCOME $name!",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black,
+                )
+                Spacer(Modifier.weight(1f))
+                Image(
+                    painter = painterResource(id = item.icon),
+                    contentDescription = "Profile Icon",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable(onClick = onProfileClick)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            }
         }
     }
 }
+
 
 
 

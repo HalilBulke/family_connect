@@ -1,12 +1,15 @@
 package com.familyconnect.familyconnect.family
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -83,7 +86,8 @@ fun CreateFamilyPage(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pageColor = Color(0xFFBB49CF)
 
-    Column {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())) {
         TopAppBar(
             title = { Text(text = "Create Family") },
             navigationIcon = {

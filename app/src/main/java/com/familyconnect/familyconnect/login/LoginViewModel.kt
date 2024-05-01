@@ -71,17 +71,23 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
                     val responseBody = response.body()
                     Log.d("responseBody", responseBody.toString())
                     if (responseBody != null) {
-                        val jwtToken = responseBody.jwt
-                        user = responseBody.user
-                        Log.d("user", user.toString())
-                        if (jwtToken.isNotEmpty()){
-                            _uiState.value = LoginUiState.Success
-                            UserToken.saveToken("Bearer $jwtToken")
-                            Log.d("UserToken", UserToken.getToken())
+                        if (responseBody.user != null){
+                            val jwtToken = responseBody.jwt
+                            user = responseBody.user
+                            Log.d("user", user.toString())
+                            if (jwtToken.isNotEmpty()){
+                                _uiState.value = LoginUiState.Success
+                                UserToken.saveToken("Bearer $jwtToken")
+                                Log.d("UserToken", UserToken.getToken())
+                            }
+                            else {
+                                _uiState.value = LoginUiState.LoginError
+                            }
                         }
                         else {
                             _uiState.value = LoginUiState.LoginError
                         }
+
                     }
                 } else {
                     _uiState.value = LoginUiState.LoginError

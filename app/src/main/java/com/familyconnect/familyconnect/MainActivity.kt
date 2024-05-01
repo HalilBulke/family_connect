@@ -30,6 +30,7 @@ import com.familyconnect.familyconnect.displayfamily.MyFamilyViewModel
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
+import com.familyconnect.familyconnect.profile.ProfileScreen
 import com.familyconnect.familyconnect.progressGetChild.GetProgressScreenchild
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksScreen
@@ -183,6 +184,19 @@ class MainActivity : ComponentActivity() {
 
                         }
 
+                        composable(route = "profile/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            ProfileScreen(onLogout = {
+                                navController.navigate("login")
+                            },
+                                username = backstackEntry.arguments?.getString("username"))
+                        }
 
                         composable(route = "getProgresschild/{username}",
                             arguments = listOf(

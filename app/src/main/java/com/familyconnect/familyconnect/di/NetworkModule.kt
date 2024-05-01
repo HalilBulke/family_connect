@@ -26,6 +26,9 @@ import com.familyconnect.familyconnect.login.UserToken
 import com.familyconnect.familyconnect.maindashboard.DefaultMainDashboardRepository
 import com.familyconnect.familyconnect.maindashboard.MainDashboardApiService
 import com.familyconnect.familyconnect.maindashboard.MainDashboardRepository
+import com.familyconnect.familyconnect.profile.NetworkProfileRepository
+import com.familyconnect.familyconnect.profile.ProfileApiService
+import com.familyconnect.familyconnect.profile.ProfileRepository
 import com.familyconnect.familyconnect.progressGetChild.ProgressApiService
 import com.familyconnect.familyconnect.register.NetworkRegisterRepository
 import com.familyconnect.familyconnect.register.RegisterApiService
@@ -227,6 +230,19 @@ class NetworkModule {
     @Singleton
     fun provideMainDashboardApiService(retrofit: Retrofit): MainDashboardApiService {
         return retrofit.create(MainDashboardApiService::class.java)
+    }
+
+    //profile
+    @Provides
+    @Singleton
+    fun provideProfile(profileApiService: ProfileApiService): ProfileRepository {
+        return NetworkProfileRepository(profileApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileApiService(retrofit: Retrofit): ProfileApiService {
+        return retrofit.create(ProfileApiService::class.java)
     }
 
     @Provides
