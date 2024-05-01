@@ -3,6 +3,8 @@ package com.familyconnect.familyconnect.addfamilymember
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -98,55 +100,59 @@ fun AddFamilyMemberPage(
                 titleContentColor = Color(0xFFFFFFFF),
             )
         )
-        ItemCard (
-            Modifier.padding(4.dp)
-        ){
-            Column {
-                Image(painter = painterResource(id = R.drawable.add_family_member), contentDescription = null)
-                Text(
-                    text = "Add a new family member with email",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color(0xFF000000),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    textAlign = TextAlign.Center
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())) {
+            ItemCard (
+                Modifier.padding(4.dp)
+            ){
+                Column {
+                    Image(painter = painterResource(id = R.drawable.add_family_member), contentDescription = null)
+                    Text(
+                        text = "Add a new family member with email",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = Color(0xFF000000),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            ) {
+                AppInputField(
+                    value = userNames,
+                    onValueChange = { userNames = it },
+                    placeholderText = "Enter User Name",
+                    isResponseError = false,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedTextColor = Color.Black,
+                        disabledBorderColor = Color.Gray,
+                        focusedBorderColor = pageColor,
+                        unfocusedBorderColor = pageColor,
+                    ),
+                )
+
+                AppButton(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    buttonText = "Add Family Member",
+                    onClick = {
+                        viewModel.addFamilyMember(
+                            AddFamilyMemberRequest(
+                                familyId.toString().toInt(),
+                                userNames.split(",")
+                            )
+                        )
+                    },
+                    buttonColor = pageColor,
+                    isLoading = false
                 )
             }
         }
 
-        Column(modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        ) {
-            AppInputField(
-                value = userNames,
-                onValueChange = { userNames = it },
-                placeholderText = "Enter User Name",
-                isResponseError = false,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedTextColor = Color.Black,
-                    disabledBorderColor = Color.Gray,
-                    focusedBorderColor = pageColor,
-                    unfocusedBorderColor = pageColor,
-                ),
-            )
-
-            AppButton(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                buttonText = "Add Family Member",
-                onClick = {
-                    viewModel.addFamilyMember(
-                        AddFamilyMemberRequest(
-                            familyId.toString().toInt(),
-                            userNames.split(",")
-                        )
-                    )
-                },
-                buttonColor = pageColor,
-                isLoading = false
-            )
-        }
     }
 }
 

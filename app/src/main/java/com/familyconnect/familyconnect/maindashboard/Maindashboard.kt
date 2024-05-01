@@ -91,6 +91,7 @@ fun MainDashboardView(
     viewModel.dashboardItems[8].route = "createProgress/$username"
     viewModel.dashboardItems[9].route = "getProgresschild/$username"
     viewModel.dashboardItems[10].route = "showallgivenprogress/$username"
+    viewModel.dashboardItems[11].route = "createEvent/$username/$famID"
 
     viewModel.profileDashboardItem.route = "profile/$username"
 

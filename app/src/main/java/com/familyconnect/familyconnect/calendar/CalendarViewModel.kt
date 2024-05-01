@@ -86,10 +86,16 @@ class CalendarViewModel @Inject constructor(
 
     private fun convertToLocalTime(timeString: String?): LocalTime {
         // ISO 8601 formatındaki string OffsetDateTime nesnesine dönüştürülür.
-        val odt = OffsetDateTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        if (timeString != null) {
+            val odt = OffsetDateTime.parse(timeString, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
-        // Saat bilgisini LocalTime olarak alır.
+            // Saat bilgisini LocalTime olarak alır.
 
-        return odt.toLocalTime()
+            return odt.toLocalTime()
+        }
+        else {
+            return LocalTime.now()
+        }
+
     }
 }

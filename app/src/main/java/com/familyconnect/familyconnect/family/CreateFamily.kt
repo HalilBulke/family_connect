@@ -86,8 +86,7 @@ fun CreateFamilyPage(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pageColor = Color(0xFFBB49CF)
 
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column() {
         TopAppBar(
             title = { Text(text = "Create Family") },
             navigationIcon = {
@@ -107,58 +106,63 @@ fun CreateFamilyPage(
                 titleContentColor = Color(0xFFFFFFFF),
             )
         )
-        ItemCard (
-            Modifier.padding(4.dp)
-        ){
-            Column (
-                modifier = Modifier.padding(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())){
+            ItemCard (
+                Modifier.padding(4.dp)
             ){
-                Image(painter = painterResource(id = R.drawable.create_family), contentDescription = null)
-                Text(
-                    text = "Create Family, Unlock Extraordinary Experiences Together!",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color(0xFF000000),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    textAlign = TextAlign.Center
+                Column (
+                    modifier = Modifier.padding(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ){
+                    Image(painter = painterResource(id = R.drawable.create_family), contentDescription = null)
+                    Text(
+                        text = "Create Family, Unlock Extraordinary Experiences Together!",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = Color(0xFF000000),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                AppInputField(
+                    value = familyName,
+                    onValueChange = { familyName = it },
+                    placeholderText = "Enter family name",
+                    isResponseError = false,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedTextColor = Color.Black,
+                        disabledBorderColor = Color.Gray,
+                        focusedBorderColor = pageColor,
+                        unfocusedBorderColor = pageColor,
+                    ),
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                AppButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    buttonText = "Create Family",
+                    isLoading = false,
+                    onClick = {
+                        val family = CreateFamilyRequestBody(
+                            familyName = familyName,
+                            familyCreatorUserName = username.toString()
+                        )
+                        viewModel.createFamily(family)
+                    },
+                    buttonColor = pageColor,
                 )
             }
         }
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            AppInputField(
-                value = familyName,
-                onValueChange = { familyName = it },
-                placeholderText = "Enter family name",
-                isResponseError = false,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedTextColor = Color.Black,
-                    disabledBorderColor = Color.Gray,
-                    focusedBorderColor = pageColor,
-                    unfocusedBorderColor = pageColor,
-                ),
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            AppButton(
-                modifier = Modifier.fillMaxWidth(),
-                buttonText = "Create Family",
-                isLoading = false,
-                onClick = {
-                    val family = CreateFamilyRequestBody(
-                        familyName = familyName,
-                        familyCreatorUserName = username.toString()
-                    )
-                    viewModel.createFamily(family)
-                },
-                buttonColor = pageColor,
-            )
-        }
+
+
     }
 }

@@ -53,6 +53,8 @@ class MainDashboardViewModel @Inject constructor(
             color = Color(0xFFE0FFFF)),
         DashboardItem(id = 11, title = "Given Progresses", icon = R.drawable.progress, route = "showallgivenprogress", permittedScenarios = listOf(4, 9),
             color = Color(0xFFE0FFFF)),
+        DashboardItem(id = 12, title = "Create Event", icon = R.drawable.event, route = "createEvent", permittedScenarios = listOf(4, 9),
+            color = Color(0xFFE0FFFF)),
     )
 
     val profileDashboardItem = DashboardItem(id = 12, title = "Profile", icon = R.drawable.profile, route = "profile", permittedScenarios = listOf(2,3,4,9),

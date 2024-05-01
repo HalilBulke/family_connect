@@ -24,6 +24,8 @@ import com.familyconnect.familyconnect.allProgress.AllProgressScreen
 import com.familyconnect.familyconnect.allProgress.AllProgressViewModel
 import com.familyconnect.familyconnect.calendar.CalendarScreen
 import com.familyconnect.familyconnect.calendar.CalendarViewModel
+import com.familyconnect.familyconnect.createevent.CreateEventScreen
+import com.familyconnect.familyconnect.createevent.CreateEventViewModel
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyViewModel
@@ -274,6 +276,26 @@ class MainActivity : ComponentActivity() {
                             AllProgressScreen(
                                 username = backstackEntry.arguments?.getString("username"),
                                 onOkButtonClicked = { navController.navigateUp() },
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
+                        }
+                        composable(route = "createEvent/{username}/{familyId}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                },
+                                navArgument(name = "familyId"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            val viewModel: CreateEventViewModel = hiltViewModel()
+
+                            CreateEventScreen(
+                                username = backstackEntry.arguments?.getString("username").orEmpty(),
+                                familyId = backstackEntry.arguments?.getString("familyId").orEmpty(),
+                                onOkButtonClicked = { navController.navigateUp() } ,
                                 onReTryButtonClicked = { viewModel.retry() },
                             )
                         }
