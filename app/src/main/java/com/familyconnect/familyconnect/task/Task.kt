@@ -14,7 +14,7 @@ data class Task constructor(
     val startTime: LocalTime = LocalTime.now(),
     val endTime: LocalTime = LocalTime.now(),
     val date: LocalDate = LocalDate.now(),
-    val priority: Int = 0,
+    val priority: Int = 1,
 ) {
     fun getWeekDaysTitle(): String {
         val weekDays = emptyList<Int>()

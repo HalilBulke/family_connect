@@ -63,6 +63,7 @@ fun TaskComponent(
         alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(1000, animDelay))
     }
     val priorityColors = listOf(
+        Color.Cyan,
         Color.LightGray,
         Color.Yellow,
         Color.Red,
@@ -76,7 +77,7 @@ fun TaskComponent(
             }
             .fillMaxWidth()
             .background(
-                priorityColors[task.priority-1],
+                priorityColors[task.priority],
                 RoundedCornerShape(
                     topStart = 8.dp,
                     bottomStart = 8.dp,
