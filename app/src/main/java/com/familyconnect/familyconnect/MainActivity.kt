@@ -36,10 +36,11 @@ import com.familyconnect.familyconnect.profile.ProfileScreen
 import com.familyconnect.familyconnect.progressGetChild.GetProgressScreenchild
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksScreen
+import com.familyconnect.familyconnect.showallgiventasks.AllTasksViewModel
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
 import com.familyconnect.familyconnect.task.CreateTaskScreen
 import com.familyconnect.familyconnect.task.CreateTaskViewModel
-import com.familyconnect.familyconnect.taskGetchild.GetTaskScreenchild
+import com.familyconnect.familyconnect.taskGetchild.ChildTasksScreen
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -182,8 +183,10 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            GetTaskScreenchild(username = backstackEntry.arguments?.getString("username"))
-
+                            ChildTasksScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                            )
                         }
 
                         composable(route = "profile/{username}",
@@ -255,9 +258,17 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
+                            val viewModel: AllTasksViewModel = hiltViewModel()
+
                             AllTasksScreen(
                                 userName = backstackEntry.arguments?.getString("username"),
                                 onOkButtonClicked = { navController.navigateUp() },
+                                onAcceptButtonClicked = {username , taskId ->
+                                    viewModel.acceptTask(username, taskId)
+                                },
+                                onRejectButtonClicked = {username , taskId ->
+                                    viewModel.rejectTask(username, taskId)
+                                },
                             )
                         }
 

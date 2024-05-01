@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
@@ -41,10 +43,7 @@ import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.ItemCard
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
-import com.familyconnect.familyconnect.commoncomposables.SnackbarController
-import com.familyconnect.familyconnect.commoncomposables.TaskComponent
-import com.familyconnect.familyconnect.task.Task
-import java.time.LocalDate
+import com.familyconnect.familyconnect.taskGetchild.Task
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -52,6 +51,8 @@ fun AllTasksScreen(
     viewModel: AllTasksViewModel = hiltViewModel(),
     userName : String?,
     onOkButtonClicked: () -> Unit,
+    onAcceptButtonClicked: (String, Int) -> Unit,
+    onRejectButtonClicked: (String, Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -69,6 +70,8 @@ fun AllTasksScreen(
             AllTasksScreenPage(
                 allTasks = (uiState as AllTasksUiState.Success).allTasks,
                 onOkButtonClicked = onOkButtonClicked,
+                onAcceptButtonClicked = onAcceptButtonClicked,
+                onRejectButtonClicked = onRejectButtonClicked,
             )
         }
     }
@@ -80,6 +83,8 @@ fun AllTasksScreen(
 fun AllTasksScreenPage(
     allTasks: List<Task>?,
     onOkButtonClicked: () -> Unit,
+    onAcceptButtonClicked: (String, Int) -> Unit,
+    onRejectButtonClicked: (String, Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pageColor = Color(0xFF009688)
@@ -135,29 +140,73 @@ fun AllTasksScreenPage(
                     Box(
                         modifier = Modifier.animateItemPlacement(tween(500))
                     ) {
-                        TaskComponent(
-                            task = task,
-                            onEdit = { taskId ->
-                                if (task.date >= LocalDate.now()) {
-                                    //onNavigate("${Routes.EditTaskScreen.name}/$taskId")
-                                }
-                            },
-                            onComplete = {
-                                if (task.date >= LocalDate.now()) {
-
-                                }
-                            },
-                            onDelete = {
-                                SnackbarController.showCustomSnackbar(
-                                    msg = "Task Deleted",
-                                    actionText = "Undo",
-                                    onClickAction = {}
+                        ItemCard(modifier = Modifier.padding(4.dp)) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "Task Name: ${task.taskName}",
+                                    style = MaterialTheme.typography.headlineMedium
                                 )
-                            },
-                            animDelay = index * 100
-                        )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Description: ${task.taskDescription}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Creator: ${task.taskCreatorUserName}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Assignee: ${task.taskAssigneeUserName}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Due Date: ${task.taskDueDate.take(10)}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Reward Points: ${task.taskRewardPoints}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Status: ${task.status}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                            0xFF4CAF50
+                                        )
+                                        ),
+                                        onClick = { onAcceptButtonClicked(task.taskAssigneeUserName,task.taskId) },
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    ) {
+                                        Text(text = "Approve")
+                                    }
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                            0xFFF44336
+                                        )
+                                        ),
+                                        onClick = { onRejectButtonClicked(task.taskAssigneeUserName,task.taskId) }
+                                    ) {
+                                        Text(text = "Reject")
+                                    }
+                                }
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
         }

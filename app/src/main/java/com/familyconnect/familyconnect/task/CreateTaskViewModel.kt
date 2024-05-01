@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.familyconnect.familyconnect.displayfamily.DisplayFamilyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ class CreateTaskViewModel @Inject constructor(
     fun addTask(task: CreateTaskRequestBody) {
         viewModelScope.launch {
             _uiState.value = CreateTaskUiState.Loading
+            delay(500)
             try {
                 val response = createTaskApiService.addTask(task)
                 if (response.isSuccessful) {

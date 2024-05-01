@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -34,43 +35,47 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.familyconnect.familyconnect.allProgress.AllProgressPage
+import com.familyconnect.familyconnect.allProgress.AllProgressUiState
+import com.familyconnect.familyconnect.progressGetChild.Progress
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GetTaskScreenchild(
+fun ChildTasksScreen(
     username: String?,
-    viewModel: TasksViewModel = hiltViewModel()
+    viewModel: ChildTasksViewModel = hiltViewModel(),
+    onOkButtonClicked: () -> Unit,
 ) {
-    val tasks by viewModel.tasks.observeAsState()
-    val isLoading by viewModel.isLoading.observeAsState(false)
-    val errorMessage by viewModel.errorMessage.observeAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        username?.let { viewModel.fetchTasks(it) }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        when {
-            isLoading -> LoadingScreen()
-            !errorMessage.isNullOrEmpty() -> ErrorScreen(errorMessage = errorMessage!!)
-            else -> tasks?.let {
-                if (it.isEmpty()) {
-                    NoTasksScreen()
-                } else {
-                    TaskList(tasks = it, onTaskComplete = { username, taskId ->
-                        Log.d("TaskList main ", "Sending taskId: $taskId for completion")
-                        viewModel.completeTask(username, taskId)
-                    })
-                }
-            }
-            }
+    when(uiState) {
+        is ChildTasksUiState.Error -> {
+            com.familyconnect.familyconnect.commoncomposables.ErrorScreen(
+                onClickFirstButton = { onOkButtonClicked() },
+                onClickSecondButton = { onOkButtonClicked() },
+            )
+        }
+        is ChildTasksUiState.Loading -> {
+            com.familyconnect.familyconnect.commoncomposables.LoadingScreen()
+        }
+        is ChildTasksUiState.Success -> {
+            ChildTasksPage(
+                allTasks = (uiState as ChildTasksUiState.Success).allTasks,
+                onOkButtonClicked = onOkButtonClicked,
+            )
         }
     }
+}
+
+@Composable
+fun ChildTasksPage(
+    allTasks: List<Task>?,
+    onOkButtonClicked: () -> Unit
+) {
+
+}
 
 
 @Composable

@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import com.familyconnect.familyconnect.taskGetchild.Task
 
 interface CreateTaskApiService {
     @POST("task/addTask")
@@ -15,4 +16,10 @@ interface CreateTaskApiService {
 
     @GET("task/getAllTasks/{username}")
     suspend fun getAllTasks(@Path("username") userName: String): Response<List<Task>>
+
+    @POST("task/completeTask/{username}/{taskId}")
+    suspend fun acceptTask(@Path("username") userName: String, @Path("taskId") taskId: Int): Response<Task>
+
+    @POST("task/rejectTask/{username}/{taskId}")
+    suspend fun rejectTask(@Path("username") userName: String, @Path("taskId") taskId: Int): Response<Task>
 }

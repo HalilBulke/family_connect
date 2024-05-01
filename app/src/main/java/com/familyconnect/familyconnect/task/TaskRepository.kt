@@ -3,12 +3,18 @@ package com.familyconnect.familyconnect.task
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import javax.inject.Inject
+import com.familyconnect.familyconnect.taskGetchild.Task
+
 
 // The TaskRepository interface
 interface TaskRepository {
     suspend fun addTask(task: CreateTaskRequestBody): Result<TaskResponse>
 
     suspend fun getAllTasks(userName: String): Response<List<Task>>
+
+    suspend fun acceptTask(userName: String, taskId: Int): Response<Task>
+
+    suspend fun rejectTask(userName: String, taskId: Int): Response<Task>
 
 }
 
@@ -31,6 +37,14 @@ class TaskRepositoryImpl @Inject constructor(
 
     override suspend fun getAllTasks(userName: String): Response<List<Task>> {
         return createTaskApiService.getAllTasks(userName)
+    }
+
+    override suspend fun acceptTask(userName: String, taskId: Int): Response<Task> {
+        return createTaskApiService.acceptTask(userName, taskId)
+    }
+
+    override suspend fun rejectTask(userName: String, taskId: Int): Response<Task> {
+        return createTaskApiService.rejectTask(userName, taskId)
     }
 }
 

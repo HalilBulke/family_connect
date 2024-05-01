@@ -1,10 +1,6 @@
 package com.familyconnect.familyconnect.taskGetchild
 
-
-import android.util.Log
 import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -12,23 +8,11 @@ interface GetTasksRepository {
     suspend fun getTasksByUsername(userName: String): Response<List<Task>>
 }
 
-
-
-
-
-class TaskRepository @Inject constructor(
+class NetworkGetTasksRepository @Inject constructor(
     private val taskApiService: TaskApiService
 ) : GetTasksRepository {
     override suspend fun getTasksByUsername(userName: String): Response<List<Task>> {
         return taskApiService.getTasksByUsername(userName)
-    }
-
-    suspend fun setTaskPending(username: String, taskId: Int): Response<Void> {
-        // This will now properly suspend and not block the main thread
-        return withContext(Dispatchers.IO) {
-            Log.d("", "$username , $taskId  ")
-            taskApiService.setTaskPending(username, taskId).execute()
-        }
     }
 }
 

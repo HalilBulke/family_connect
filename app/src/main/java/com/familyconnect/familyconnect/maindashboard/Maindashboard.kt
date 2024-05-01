@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -51,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.commoncomposables.ItemCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,18 +152,6 @@ fun DashboardItemsGrid(
     items: List<DashboardItem>,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "PAGES",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.padding(top = 16.dp)
-        )
-    }
     LazyColumn(
         modifier = modifier
     ) {
@@ -199,7 +189,6 @@ fun DashboardItemCard(
         modifier = modifier
             .padding(8.dp)
             .clickable { navController.navigate(item.route) },
-                //.replace("{$KEY_USER_NAME}", "tokibokit@gmail.com")) },
         colors = CardDefaults.cardColors(
             containerColor = item.color,
         ),
@@ -226,76 +215,46 @@ fun DashboardItemCard(
 }
 
 @Composable
-fun BottomNavigationBar() {
-    // Assuming BottomBarIcon is a previously defined composable that accepts an ImageVector and a String
-    BottomBarIcon(Icons.Default.Home, "Home")
-    BottomBarIcon(Icons.Default.Face, "Family")
-    BottomBarIcon(Icons.Default.Settings, "Settings")
-}
-
-@Composable
-fun BottomBarIcon(
-    imageVector: ImageVector,
-    contentDescription: String
-) {
-    Icon(
-        imageVector = imageVector,
-        contentDescription = contentDescription,
-        modifier = Modifier.padding(16.dp)
-    )
-}
-
-@Composable
-fun FamilyPhoto() {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-    LazyRow {
+fun FamilyPhoto(modifier: Modifier = Modifier) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth().height(200.dp).padding(8.dp)
+    ) {
         item {
-            Image(
-                painter = painterResource(id = R.drawable.family222),
-                contentDescription = "Family photo 1",
-                modifier = Modifier
-                    .width(screenWidth)
-                    .height(200.dp)
-                    .padding(horizontal = 8.dp)
-            )
+            ItemCard {
+                Image(
+                    painter = painterResource(id = R.drawable.add_family_member),
+                    contentDescription = "Family photo 1",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
         item {
-            Image(
-                painter = painterResource(id = R.drawable.family111),
-                contentDescription = "Family photo 2",
-                modifier = Modifier
-                    .width(screenWidth)
-                    .height(200.dp)
-                    .padding(horizontal = 8.dp)
-            )
+            ItemCard {
+                Image(
+                    painter = painterResource(id = R.drawable.create_family),
+                    contentDescription = "Family photo 1",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
         item {
-            Image(
-                painter = painterResource(id = R.drawable.family333),
-                contentDescription = "Family photo 3",
-                modifier = Modifier
-                    .width(screenWidth)
-                    .height(200.dp)
-                    .padding(horizontal = 8.dp)
-            )
+            ItemCard {
+                Image(
+                    painter = painterResource(id = R.drawable.family111),
+                    contentDescription = "Family photo 1",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 }
 
 @Composable
 fun WelcomeMessage(name: String, item: DashboardItem, onProfileClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-            .padding(horizontal = 8.dp)
-            .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = Color(0xFFE0FFFF))
-    ) {
+    ItemCard {
         Row(
             modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
