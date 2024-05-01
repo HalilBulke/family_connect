@@ -1,125 +1,240 @@
 package com.familyconnect.familyconnect.task
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import com.familyconnect.familyconnect.commoncomposables.DropDownFun
+import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
+import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CreateTaskScreen(viewModel: CreateTaskViewModel = hiltViewModel(), username: String?) {
+fun CreateTaskScreen(
+    viewModel: CreateTaskViewModel = hiltViewModel(),
+    username: String,
+    onOkButtonClicked: () -> Unit,
+    onReTryButtonClicked:() -> Unit,
+) {
 
+    val uiState by viewModel.uiState.collectAsState()
 
+    when(uiState) {
+        is CreateTaskUiState.Error -> {
+            ErrorScreen(
+                onClickFirstButton = { onOkButtonClicked() },
+                onClickSecondButton = { onReTryButtonClicked()
+                }
+            )
+        }
+        is CreateTaskUiState.Loading -> {
+            LoadingScreen()
+        }
+        is CreateTaskUiState.Success -> {
+            CreateTaskPage(
+                viewModel = viewModel,
+                userName = username,
+                familyMembers = (uiState as CreateTaskUiState.Success).familyMembers.orEmpty(),
+                onOkButtonClicked = onOkButtonClicked
+            )
+        }
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun CreateTaskPage(
+    viewModel: CreateTaskViewModel,
+    userName: String,
+    familyMembers: List<String>,
+    onOkButtonClicked: () -> Unit,
+) {
     var taskName by remember { mutableStateOf("") }
     var taskDescription by remember { mutableStateOf("") }
-    var taskCreatorUserName by remember { mutableStateOf(username) }  // Directly using the passed username, no need to show it in UI
     var taskAssigneeUserName by remember { mutableStateOf("") }
-    var taskDueDate by remember { mutableStateOf("") }
     var taskRewardPoints by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+    var priority by remember { mutableStateOf("") }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    Column {
+        TopAppBar(
+            title = { Text(text = "Create Task") },
+            navigationIcon = {
+                IconButton(onClick = { onOkButtonClicked() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Go back"
+                    )
+                }
+            },
+            scrollBehavior = scrollBehavior,
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color(0xFF03A9F4),
+                actionIconContentColor = Color(0xFF03A9F4),
+                navigationIconContentColor = Color.White,
+                scrolledContainerColor = Color(0xFF03A9F4),
+                titleContentColor = Color(0xFFFFFFFF),
+            )
+        )
 
-    val familyData by viewModel.familyData.observeAsState()
-    val isLoading2 by viewModel.isLoading2.observeAsState()
-    val errorMessage by viewModel.errorMessage.observeAsState()
+        Column(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 32.dp, bottom = 8.dp)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
 
+            val dateTime = LocalDateTime.now()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadFamilyMembers(username.toString())
-    }
-    val userList = familyData?.familyMembers //user list
+            val datePickerState = remember {
+                DatePickerState(
+                    yearRange = (2023..2024),
+                    initialSelectedDateMillis = dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+                    initialDisplayMode = DisplayMode.Input,
+                    initialDisplayedMonthMillis = null
+                )
+            }
 
+            Text(
+                text ="Create tasks to contribute to the development of your child's sense of responsibility.",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
-
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        if (isLoading2 == true) {
-            // Display loading indicator
-            Text(text = "Loading...")
-        } else {
-            Text("Create a New Task", style = MaterialTheme.typography.headlineMedium)
             AppInputField(
                 value = taskName,
                 onValueChange = { taskName = it },
                 placeholderText = "Enter task name",
-                isResponseError = false
+                isResponseError = false,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedTextColor = Color.Black,
+                    disabledBorderColor = Color.Gray,
+                    focusedBorderColor = Color(0xFF03A9F4),
+                    unfocusedBorderColor = Color(0xFF03A9F4),
+                ),
             )
             AppInputField(
                 value = taskDescription,
                 onValueChange = { taskDescription = it },
                 placeholderText = "Enter task description",
-                isResponseError = false
+                isResponseError = false,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedTextColor = Color.Black,
+                    disabledBorderColor = Color.Gray,
+                    focusedBorderColor = Color(0xFF03A9F4),
+                    unfocusedBorderColor = Color(0xFF03A9F4),
+                ),
             )
-            AppInputField(
-                value = taskDueDate,
-                onValueChange = { taskDueDate = it },
-                placeholderText = "Due date (YYYY-MM-DD)",
-                isResponseError = false
-            )
+
             AppInputField(
                 value = taskRewardPoints,
                 onValueChange = { taskRewardPoints = it },
                 placeholderText = "Reward Points",
-                isResponseError = false
+                isResponseError = false,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedTextColor = Color.Black,
+                    disabledBorderColor = Color.Gray,
+                    focusedBorderColor = Color(0xFF03A9F4),
+                    unfocusedBorderColor = Color(0xFF03A9F4),
+                ),
             )
 
-            if (userList != null) {
+            if (familyMembers.isNotEmpty()) {
                 DropDownFun(
-                    userList = userList,
+                    userList = familyMembers,
+                    title = "Select a child",
                     selectedUser = taskAssigneeUserName,
                     onValueChange = { selectedUser ->
                         taskAssigneeUserName = selectedUser
-                    }
+                    },
+                    Color(0xFF03A9F4)
                 )
             }
 
-            Spacer(modifier = Modifier.height(96.dp))
+            DropDownFun(
+                userList = listOf("1","2","3","4"),
+                title = "Select task Priority",
+                selectedUser = priority,
+                onValueChange = { selectedPriority ->
+                    priority = selectedPriority
+                },
+                Color(0xFF03A9F4)
+            )
+            DatePicker(
+                state = datePickerState,
+                title = null,
+                modifier = Modifier.fillMaxWidth()
+            )
+            val selectedDate = datePickerState.selectedDateMillis?.let {
+                Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+            }
+
+            Log.d("datePickerState", selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString())
             AppButton(
+                modifier = Modifier.fillMaxWidth(),
                 buttonText = "Create Task",
-                isLoading = isLoading,
+                isLoading = false,
                 onClick = {
-                    Log.d("CreateTaskScreen", "Username: $username")
-                    isLoading = true
                     val task = CreateTaskRequestBody(
                         taskName = taskName,
                         taskDescription = taskDescription,
-                        taskCreatorUserName = taskCreatorUserName.toString(),  // This value is now entirely internal
+                        taskCreatorUserName = userName,
                         taskAssigneeUserName = taskAssigneeUserName,
-                        taskDueDate = taskDueDate,
-                        taskRewardPoints.toIntOrNull() ?: 0,
-                        taskId = 0  // Assuming new tasks have no initial ID.
+                        taskDueDate = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString(),
+                        taskRewardPoints = taskRewardPoints.toIntOrNull() ?: 0,
+                        priority = if (priority.isNotEmpty()) priority.toInt() else 0,
                     )
-                    viewModel.addTask(task, onSuccess = {
-                        isLoading = false
-                        // Navigate away or show success message
-                    }, onError = { error ->
-                        isLoading = false
-                        // Show error message
-                    })
-                }
+                    viewModel.addTask(task)
+                },
+                buttonColor = Color(0xFF00BCD4)
             )
         }
     }

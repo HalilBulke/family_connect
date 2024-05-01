@@ -78,8 +78,7 @@ fun CalendarScreen(
         is CalenderUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
-                onClickSecondButton = { onReTryButtonClicked()
-                }
+                onClickSecondButton = { onReTryButtonClicked() }
             )
         }
         is CalenderUiState.Loading -> {
@@ -91,9 +90,8 @@ fun CalendarScreen(
                 onEvent = {},
                 onMainEvent = {},
                 onNavigate = {},
-            ) {
-
-            }
+                onBack = onOkButtonClicked
+            )
         }
     }
 }

@@ -65,7 +65,8 @@ fun TaskComponent(
     val priorityColors = listOf(
         Color.LightGray,
         Color.Yellow,
-        Color.Red
+        Color.Red,
+        Color.DarkGray
     )
 
     Box(

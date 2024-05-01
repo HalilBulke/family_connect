@@ -5,6 +5,9 @@ import javax.inject.Inject
 
 interface GetFamilyRepository {
     suspend fun getFamily(userName: String): Response<Family>
+
+    suspend fun getFamilyMembers(userName: String): Response<List<FamilyMembers>>
+
 }
 
 class DisplayFamilyRepository @Inject constructor(
@@ -13,6 +16,10 @@ class DisplayFamilyRepository @Inject constructor(
 
     override suspend fun getFamily(userName: String): Response<Family> {
         return familyApiService.getFamily(userName)
+    }
+
+    override suspend fun getFamilyMembers(userName: String): Response<List<FamilyMembers>> {
+        return familyApiService.getFamilyMembers(userName)
     }
 }
 
@@ -25,3 +32,9 @@ data class Family(
     val creatorUserName: String
 )
 
+data class FamilyMembers(
+    val userName: String, // Change the type according to the actual type in the response
+    val name: String,
+    val profilePictureId: Int, // Change the type according to the actual type in the response
+    val role: String,
+)

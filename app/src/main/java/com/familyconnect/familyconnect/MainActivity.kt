@@ -20,25 +20,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberScreen
-import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberViewModel
+import com.familyconnect.familyconnect.allProgress.AllProgressScreen
+import com.familyconnect.familyconnect.allProgress.AllProgressViewModel
 import com.familyconnect.familyconnect.calendar.CalendarScreen
 import com.familyconnect.familyconnect.calendar.CalendarViewModel
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
+import com.familyconnect.familyconnect.displayfamily.MyFamilyViewModel
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
 import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.progressGetChild.GetProgressScreenchild
 import com.familyconnect.familyconnect.register.RegisterScreen
-import com.familyconnect.familyconnect.showallgivenprogress.ShowAllGivenProgress
-import com.familyconnect.familyconnect.showallgiventasks.ShowAllGivenTasks
+import com.familyconnect.familyconnect.showallgiventasks.AllTasksScreen
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
 import com.familyconnect.familyconnect.task.CreateTaskScreen
+import com.familyconnect.familyconnect.task.CreateTaskViewModel
 import com.familyconnect.familyconnect.taskGetchild.GetTaskScreenchild
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
 import dagger.hilt.android.AndroidEntryPoint
-
-const val KEY_USER_NAME = "userName"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -127,10 +127,6 @@ class MainActivity : ComponentActivity() {
 
                         }
 
-
-
-
-
                         composable(route = "createTask/{username}",
                             arguments = listOf(
                                 navArgument(name = "username"){
@@ -139,8 +135,13 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            CreateTaskScreen(username = backstackEntry.arguments?.getString("username"))
+                            val viewModel: CreateTaskViewModel = hiltViewModel()
 
+                            CreateTaskScreen(
+                                username = backstackEntry.arguments?.getString("username").orEmpty(),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
                         }
                         composable(route = "createProgress/{username}",
                             arguments = listOf(
@@ -150,14 +151,11 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            CreateProgressScreen(username = backstackEntry.arguments?.getString("username"))
-
+                            CreateProgressScreen(
+                                username = backstackEntry.arguments?.getString("username").orEmpty(),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                )
                         }
-
-
-
-
-
                         composable(route = "createFamily/{username}",
                             arguments = listOf(
                                 navArgument(name = "username"){
@@ -166,8 +164,11 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            CreateFamilyScreen(username = backstackEntry.arguments?.getString("username"))
-
+                            CreateFamilyScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { navController.navigateUp() },
+                                )
                         }
 
                         composable(route = "getTaskchild/{username}",
@@ -195,11 +196,6 @@ class MainActivity : ComponentActivity() {
 
                         }
 
-
-
-
-
-
                         composable(route = "displayFamily/{username}",
                             arguments = listOf(
                                 navArgument(name = "username"){
@@ -208,21 +204,27 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            MyFamilyScreen(username = backstackEntry.arguments?.getString("username"))
+                            val viewModel: MyFamilyViewModel = hiltViewModel()
 
+                            MyFamilyScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
                         }
 
 
-                        composable(route = "addFamilyMember/{familyId}",
+                        composable(
+                            route = "addFamilyMember/{familyId}",
                             arguments = listOf(
                                 navArgument(name = "familyId"){
                                     type = NavType.StringType
                                 }
                             )) {backstackEntry ->
-                            val viewModel: AddFamilyMemberViewModel = hiltViewModel()
-                            AddFamilyMemberScreen(familyId = backstackEntry.arguments?.getString("familyId"),
-                                onOkButtonClicked = { navController.navigateUp() } ,
-                                onReTryButtonClicked = { viewModel.retry() })
+                            AddFamilyMemberScreen(
+                                familyId = backstackEntry.arguments?.getString("familyId"),
+                                onOkButtonClicked = { navController.navigateUp() },
+                            )
                         }
 
 
@@ -237,8 +239,10 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            ShowAllGivenTasks(username = backstackEntry.arguments?.getString("username"))
-
+                            AllTasksScreen(
+                                userName = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() },
+                            )
                         }
 
 
@@ -251,12 +255,14 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            ShowAllGivenProgress(username = backstackEntry.arguments?.getString("username"))
+                            val viewModel: AllProgressViewModel = hiltViewModel()
 
+                            AllProgressScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() },
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
                         }
-
-
-
                     }
                 }
             }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,7 +30,21 @@ fun AppInputField(
     isInputError: Boolean = false,
     isPassword: Boolean = false,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        unfocusedTextColor = Color.Black,
+        disabledBorderColor = Color.Gray,
+        focusedBorderColor = if (isInputError || isResponseError) {
+            Color.Red
+        } else {
+            Color(0xFF015B63)
+        },
+        unfocusedBorderColor = if (isInputError || isResponseError) {
+            Color.Red
+        } else {
+            Color(0xFF015B63)
+        },
+    ),
 ) {
     val isError = isInputError || isResponseError
 
@@ -44,20 +59,7 @@ fun AppInputField(
         },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Color.Black,
-            disabledBorderColor = Color.Gray,
-            focusedBorderColor = if (isError) {
-                Color.Red
-            } else {
-                Color(0xFF015B63)
-            },
-            unfocusedBorderColor = if (isError) {
-                Color.Red
-            } else {
-                Color(0xFF015B63)
-            },
-        ),
+        colors = colors,
         modifier = modifier.fillMaxWidth(),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         singleLine = true,

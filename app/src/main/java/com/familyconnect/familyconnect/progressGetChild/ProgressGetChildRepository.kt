@@ -17,9 +17,6 @@ class ProgressRepository @Inject constructor(
     }
 }
 
-
-
-
 data class Progress(
     @SerializedName("progressName") val progressName: String,
     @SerializedName("quota") val quota: Int,

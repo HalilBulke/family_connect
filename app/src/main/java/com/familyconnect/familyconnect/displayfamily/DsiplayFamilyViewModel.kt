@@ -1,55 +1,75 @@
 package com.familyconnect.familyconnect.displayfamily
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed interface MyFamilyUiState {
+    object Loading : MyFamilyUiState
+    object Error : MyFamilyUiState
+    data class Success(val family: MyFamily) : MyFamilyUiState
+}
+
 @HiltViewModel
 class MyFamilyViewModel @Inject constructor(
-    private val familyRepository: DisplayFamilyRepository
+    private val familyRepository: DisplayFamilyRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _familyData = MutableLiveData<Family>()
-    val familyData: LiveData<Family> = _familyData
+    private val _uiState = MutableStateFlow<MyFamilyUiState>(MyFamilyUiState.Loading)
+    val uiState: StateFlow<MyFamilyUiState> = _uiState
 
-    // Additional LiveData fields for loading state and error message
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val userName: String
+        get() = savedStateHandle.get<String>("username").orEmpty()
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    init {
+        Log.d("username", userName)
+        fetchFamily(userName = userName)
+    }
 
-    fun fetchFamily(userName: String) {
-        _isLoading.value = true
+    fun retry() {
+        Log.d("retry", userName)
+        fetchFamily(userName = userName)
+    }
+
+    private fun fetchFamily(userName: String) {
         viewModelScope.launch {
             try {
-                val response = familyRepository.getFamily(userName)
-                Log.d("FAM", response.toString())
-                if (response.isSuccessful) {
-                    val responseData = response.body()
-                    if (responseData != null) {
-                        val family = Family(
-                            id = responseData.id,
-                            familyName = responseData.familyName,
-                            familyMembers = responseData.familyMembers,
-                            creatorUserName = responseData.creatorUserName
-                        )
-                        _familyData.value = family
+                val familyResponse = familyRepository.getFamily(userName)
+                val familyMembersResponse = familyRepository.getFamilyMembers(userName)
+
+                Log.d("FAM", familyResponse.toString())
+                if (familyResponse.isSuccessful && familyMembersResponse.isSuccessful) {
+                    val familyResponseData = familyResponse.body()
+                    val familyMembersResponseData = familyMembersResponse.body()
+                    if (familyResponseData != null && familyMembersResponseData != null) {
+                        _uiState.value = MyFamilyUiState.Success(MyFamily(
+                            id = familyResponseData.id,
+                            familyName = familyResponseData.familyName,
+                            familyMembers = familyMembersResponseData,
+                            creatorUserName = familyResponseData.creatorUserName
+                        ))
                     } else {
-                        _errorMessage.value = "Empty response data"
+                        _uiState.value = MyFamilyUiState.Error
                     }
                 } else {
-                    _errorMessage.value = "User does not belong to any family"
+                    _uiState.value = MyFamilyUiState.Error
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "An error occurred: ${e.message}"
-            } finally {
-                _isLoading.value = false
+                _uiState.value = MyFamilyUiState.Error
             }
         }
     }
 }
+
+data class MyFamily(
+    val id: Int, // Change the type according to the actual type in the response
+    val familyName: String,
+    val familyMembers: List<FamilyMembers>, // Change the type according to the actual type in the response
+    val creatorUserName: String
+)

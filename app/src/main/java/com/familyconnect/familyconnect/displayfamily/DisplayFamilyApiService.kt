@@ -9,4 +9,7 @@ import retrofit2.http.Query
 interface FamilyApiService {
     @GET("family/getFamily")
     suspend fun getFamily(@Query("userName") userName: String): Response<Family>
+
+    @GET("family/getFamilyMembersInformation")
+    suspend fun getFamilyMembers(@Query("userName") userName: String): Response<List<FamilyMembers>>
 }

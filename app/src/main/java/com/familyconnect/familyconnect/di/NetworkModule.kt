@@ -4,6 +4,9 @@ import android.util.Log
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberRepository
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberRepositoryImpl
 import com.familyconnect.familyconnect.addfamilymember.AddMemberApiService
+import com.familyconnect.familyconnect.allProgress.AllProgressApiService
+import com.familyconnect.familyconnect.allProgress.AllProgressRepository
+import com.familyconnect.familyconnect.allProgress.NetworkAllProgressRepository
 import com.familyconnect.familyconnect.calendar.CalendarApiService
 import com.familyconnect.familyconnect.calendar.CalenderRepository
 import com.familyconnect.familyconnect.calendar.NetworkCalenderRepository
@@ -44,7 +47,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 //Enter your local ip as subdomain instead of 192.168.1.2
-private const val BASE_URL = "http://192.168.56.1:8000"
+private const val BASE_URL = "http://192.168.1.83:8000"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -236,5 +239,17 @@ class NetworkModule {
     @Singleton
     fun provideCalenderApiService(retrofit: Retrofit): CalendarApiService {
         return retrofit.create(CalendarApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAllProgress(apiService: AllProgressApiService): AllProgressRepository {
+        return NetworkAllProgressRepository(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAllProgressApiService(retrofit: Retrofit): AllProgressApiService {
+        return retrofit.create(AllProgressApiService::class.java)
     }
 }

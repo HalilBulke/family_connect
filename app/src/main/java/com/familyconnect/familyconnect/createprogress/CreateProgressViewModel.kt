@@ -3,72 +3,89 @@ package com.familyconnect.familyconnect.createprogress
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.displayfamily.DisplayFamilyRepository
 import com.familyconnect.familyconnect.displayfamily.Family
+import com.familyconnect.familyconnect.task.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed interface CreateProgressUiState {
+    data class Default(val familyMembers: List<String>) : CreateProgressUiState
+    object Loading : CreateProgressUiState
+    object Error : CreateProgressUiState
+    object Success : CreateProgressUiState
+}
 
 @HiltViewModel
 class CreateProgressViewModel @Inject constructor(
     private val createProgressApiService: CreateProgressApiService,
-    private val displayFamilyRepository: DisplayFamilyRepository
+    private val displayFamilyRepository: DisplayFamilyRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    private val _uiState = MutableStateFlow<CreateProgressUiState>(CreateProgressUiState.Loading)
+    val uiState: StateFlow<CreateProgressUiState> = _uiState
 
-    fun addProgress(progress: CreateProgressRequestBody, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    private val userName: String
+        get() = savedStateHandle.get<String>("username").orEmpty()
+
+    private val _familyMembers = MutableStateFlow<List<String>>(listOf())
+
+    init {
+        Log.d("username", userName)
+        loadFamilyMembers(userName = userName)
+    }
+
+    fun addProgress(progress: CreateProgressRequestBody) {
         viewModelScope.launch {
             try {
+                _uiState.value = CreateProgressUiState.Loading
+                delay(500)
                 val response = createProgressApiService.addProgress(progress)
-                if (response.isSuccessful && response.body()?.success == true) {
-                    onSuccess()
+                if (response.isSuccessful) {
+                    _uiState.value = CreateProgressUiState.Success
+                    delay(500)
                 } else {
-                    onError(response.message())
+                    _uiState.value = CreateProgressUiState.Error
                 }
             } catch (e: Exception) {
-                onError(e.localizedMessage ?: "An unknown error occurred")
+                _uiState.value = CreateProgressUiState.Error
+            } finally {
+                _uiState.value = CreateProgressUiState.Default(
+                    familyMembers = _familyMembers.value,
+                )
             }
         }
     }
 
-
-    private val _familyData = MutableLiveData<Family>()
-    val familyData: LiveData<Family> = _familyData
-
-    // Additional LiveData fields for loading state and error message
-    private val _isLoading2 = MutableLiveData<Boolean>()
-    val isLoading2: LiveData<Boolean> = _isLoading2
-
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
-
     fun loadFamilyMembers(userName: String) {
-        _isLoading2.value = true
         viewModelScope.launch {
+            _uiState.value = CreateProgressUiState.Loading
             try {
                 val response = displayFamilyRepository.getFamily(userName)
                 Log.d("FAM", response.toString())
                 if (response.isSuccessful) {
                     val responseData = response.body()
                     if (responseData != null) {
-                        val family = Family(
-                            id = responseData.id,
-                            familyName = responseData.familyName,
+                        _uiState.value = CreateProgressUiState.Default(
                             familyMembers = responseData.familyMembers,
-                            creatorUserName = responseData.creatorUserName
                         )
-                        _familyData.value = family
+                        _familyMembers.value = responseData.familyMembers
                     } else {
-                        _errorMessage.value = "Empty response data"
+                        _uiState.value = CreateProgressUiState.Error
                     }
                 } else {
-                    _errorMessage.value = "User does not belong to any family"
+                    _uiState.value = CreateProgressUiState.Error
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "An error occurred: ${e.message}"
-            } finally {
-                _isLoading2.value = false
+                _uiState.value = CreateProgressUiState.Error
             }
         }
     }

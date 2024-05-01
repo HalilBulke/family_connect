@@ -2,76 +2,62 @@ package com.familyconnect.familyconnect.showallgiventasks
 
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.familyconnect.familyconnect.displayfamily.DisplayFamilyRepository
-import com.familyconnect.familyconnect.displayfamily.Family
-import com.familyconnect.familyconnect.taskGetchild.Task
-import com.familyconnect.familyconnect.taskGetchild.TaskApiService
+import com.familyconnect.familyconnect.task.Task
+import com.familyconnect.familyconnect.task.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
+sealed interface AllTasksUiState {
+    data class Success(val allTasks: List<Task>?) : AllTasksUiState
+    object Loading : AllTasksUiState
+    object Error : AllTasksUiState
+}
+
 @HiltViewModel
-class MyFamilyViewModel2 @Inject constructor(
-    private val familyRepository: DisplayFamilyRepository,
-    private val taskApiService: TaskApiService // Ensure this is injected properly
+class AllTasksViewModel @Inject constructor(
+    private val tasksRepository: TaskRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _familyData = MutableLiveData<Family>()
-    val familyData: LiveData<Family> = _familyData
 
-    private val _tasksData = MutableLiveData<Map<String, List<Task>>>()
-    val tasksData: LiveData<Map<String, List<Task>>> = _tasksData
+    private val _uiState = MutableStateFlow<AllTasksUiState>(AllTasksUiState.Loading)
+    val uiState: StateFlow<AllTasksUiState> = _uiState
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    init {
+        Log.d("username", userName)
+        getAllTasks(userName = userName)
+    }
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    private val userName: String
+        get() = savedStateHandle.get<String>("username").orEmpty()
 
-    fun fetchFamily(userName: String) {
-        _isLoading.value = true
+    private fun getAllTasks(userName: String) {
         viewModelScope.launch {
             try {
-                val familyResponse = familyRepository.getFamily(userName)
-                if (familyResponse.isSuccessful && familyResponse.body() != null) {
-                    val family = familyResponse.body()!!
-                    _familyData.value = family
-                    family.familyMembers.forEach { member ->
-                        fetchTasksForMember(member)
-                    }
+                val getAllTasksResponse = tasksRepository.getAllTasks(userName)
+                if (getAllTasksResponse.isSuccessful) {
+                    _uiState.value = AllTasksUiState.Success(
+                        getAllTasksResponse.body()
+                    )
                 } else {
-                    _errorMessage.value = "Failed to fetch family"
+                    _uiState.value = AllTasksUiState.Error
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "An error occurred: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    private fun fetchTasksForMember(userName: String) {
-        viewModelScope.launch {
-            try {
-                val tasksResponse = taskApiService.getTasksByUsername(userName)
-                if (tasksResponse.isSuccessful && tasksResponse.body() != null) {
-                    val tasks = tasksResponse.body()!!
-                    _tasksData.value = _tasksData.value.orEmpty() + (userName to tasks)
-                }
-            } catch (e: Exception) {
-                Log.e("VM", "Error fetching tasks for $userName: ${e.message}")
+                _uiState.value = AllTasksUiState.Error
             }
         }
     }
 
 
-
+/*
     fun completeTask(userName: String, taskId: Int) {
         taskApiService.completeTask(userName, taskId).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
@@ -110,6 +96,8 @@ class MyFamilyViewModel2 @Inject constructor(
         })
     }
 
+
+ */
 
 
 

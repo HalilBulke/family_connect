@@ -1,100 +1,161 @@
 package com.familyconnect.familyconnect.displayfamily
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Face
+import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
+import com.familyconnect.familyconnect.commoncomposables.ItemCard
+import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
 
 @Composable
 fun MyFamilyScreen(
     username: String?,
-    viewModel: MyFamilyViewModel = hiltViewModel()
+    viewModel: MyFamilyViewModel = hiltViewModel(),
+    onOkButtonClicked: () -> Unit,
+    onReTryButtonClicked:() -> Unit,
 ) {
-    val familyData by viewModel.familyData.observeAsState()
-    val isLoading by viewModel.isLoading.observeAsState()
-    val errorMessage by viewModel.errorMessage.observeAsState()
-    var isExpanded by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
 
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchFamily(username.toString())
+    when(uiState) {
+        is MyFamilyUiState.Error -> {
+            ErrorScreen(
+                onClickFirstButton = { onOkButtonClicked() },
+                onClickSecondButton = { onReTryButtonClicked() },
+            )
+        }
+        is MyFamilyUiState.Loading -> {
+            LoadingScreen()
+        }
+        is MyFamilyUiState.Success -> {
+            MyFamilyPage(
+                family = (uiState as MyFamilyUiState.Success).family,
+                onOkButtonClicked = onOkButtonClicked
+            )
+        }
     }
+}
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (isLoading == true) {
-            // Display loading indicator
-            CircularProgressIndicator(modifier = Modifier.size(48.dp))
-        } else {
-            if (!errorMessage.isNullOrEmpty()) {
-                // Display error message if available
-                Text(text = "Error: $errorMessage")
-            } else {
-                // Display family data if available
-                familyData?.let { family ->
-                    Text(
-                        text = "Family Name:",
-                        style = MaterialTheme.typography.headlineLarge
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyFamilyPage(
+    family: MyFamily,
+    onOkButtonClicked: () -> Unit,
+) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val pageColor = Color(0xFFA47CEC)
+    val creator = family.creatorUserName
+    Column {
+        TopAppBar(
+            title = { Text(text = "My Family") },
+            navigationIcon = {
+                IconButton(onClick = { onOkButtonClicked() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Go back"
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = family.familyName,
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Family Members:",
-                            style = TextStyle(fontSize = 32.sp),
-                            modifier = Modifier.weight(1f)
+                }
+            },
+            scrollBehavior = scrollBehavior,
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = pageColor,
+                actionIconContentColor = pageColor,
+                navigationIconContentColor = Color.White,
+                scrolledContainerColor = pageColor,
+                titleContentColor = Color(0xFFFFFFFF),
+            )
+        )
+        ItemCard (
+            Modifier.padding(4.dp)
+        ){
+            Column (
+                modifier = Modifier.padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Image(painter = painterResource(id = R.drawable.family_image), contentDescription = null)
+                Text(
+                    text = family.familyName,
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color(0xFF2196F3),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = "Family Creator: $creator",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                    textAlign = TextAlign.End
+                )
+            }
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 8.dp),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        )
+        {
+            itemsIndexed(items = family.familyMembers) { index, member ->
+                ItemCard(modifier = Modifier.padding(4.dp)) {
+                    Row {
+                        Icon(
+                            imageVector = if (member.role == "PARENT") Icons.Rounded.Person else Icons.Rounded.Face,
+                            tint = Color(0xFF2196F3),
+                            contentDescription = null,
+                            modifier = Modifier.size(56.dp).padding(horizontal = 16.dp)
                         )
-                        IconButton(
-                            onClick = { isExpanded = !isExpanded },
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                                contentDescription = "Expand/Collapse"
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    if (isExpanded) {
-                        family.familyMembers.forEach { member ->
+                        Column {
                             Text(
-                                text = "- $member",
-                                style = TextStyle(fontSize = 24.sp)
+                                text = member.role,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = pageColor,
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = member.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = member.userName,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                                textAlign = TextAlign.Start
                             )
                         }
                     }
