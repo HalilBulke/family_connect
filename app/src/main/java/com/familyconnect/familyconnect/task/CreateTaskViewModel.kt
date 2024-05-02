@@ -15,6 +15,7 @@ import javax.inject.Inject
 sealed interface CreateTaskUiState {
     object Loading : CreateTaskUiState
     object Error : CreateTaskUiState
+    data class final(val familyMembers: List<String>?) : CreateTaskUiState
     data class Success(val familyMembers: List<String>?) : CreateTaskUiState
 }
 
@@ -50,7 +51,7 @@ class CreateTaskViewModel @Inject constructor(
             try {
                 val response = createTaskApiService.addTask(task)
                 if (response.isSuccessful) {
-                    _uiState.value = CreateTaskUiState.Success(familyMembers = _familyMembers.value)
+                    _uiState.value = CreateTaskUiState.final(familyMembers = _familyMembers.value)
                 } else {
                     _uiState.value = CreateTaskUiState.Error
                 }

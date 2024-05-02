@@ -91,7 +91,7 @@ fun AllTasksScreenPage(
 
     Column {
         TopAppBar(
-            title = { Text(text = "All Tasks") },
+            title = { Text(text = "Given Tasks") },
             navigationIcon = {
                 IconButton(onClick = { onOkButtonClicked() }) {
                     Icon(
@@ -156,12 +156,12 @@ fun AllTasksScreenPage(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Creator: ${task.taskCreatorUserName}",
+                                    text = "Creator: ${task.taskCreatorUserName.substringBefore("@")}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Assignee: ${task.taskAssigneeUserName}",
+                                    text = "Assignee: ${task.taskAssigneeUserName.substringBefore("@")}",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
