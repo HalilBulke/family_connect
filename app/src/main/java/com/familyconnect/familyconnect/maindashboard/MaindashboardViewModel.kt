@@ -30,7 +30,7 @@ class MainDashboardViewModel @Inject constructor(
     val userData: LiveData<User> = _userData
 
     var dashboardItems = listOf(
-        DashboardItem(id = 1, title = "Calendar", icon = R.drawable.calendar, route = "calendar", permittedScenarios = listOf(2, 3, 4, 9),
+        DashboardItem(id = 1, title = "Calendar", icon = R.drawable.calendar, route = "calendar", permittedScenarios = listOf(2, 4, 9),
             color = Color(0xFFFFFFFF)
         ),
         DashboardItem(id = 2, title = "Create Task", icon = R.drawable.create_task, route = "createTask", permittedScenarios = listOf(4, 9),

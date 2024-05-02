@@ -1,9 +1,12 @@
 package com.familyconnect.familyconnect.calendar
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
@@ -43,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
@@ -67,10 +72,12 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CalendarScreen(
+    navController: NavHostController,
     userName: String?,
     viewModel: CalendarViewModel = hiltViewModel(),
     onOkButtonClicked: () -> Unit,
     onReTryButtonClicked:() -> Unit,
+    familyId: String,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -90,7 +97,10 @@ fun CalendarScreen(
                 onEvent = {},
                 onMainEvent = {},
                 onNavigate = {},
-                onBack = onOkButtonClicked
+                onBack = onOkButtonClicked,
+                userName = userName,
+                familyId = familyId,
+                navController = navController
             )
         }
     }
@@ -103,7 +113,10 @@ fun CalendarPage(
     onEvent: (HomeScreenEvent) -> Unit,
     onMainEvent: (MainEvent) -> Unit,
     onNavigate: (route: String) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    userName: String?,
+    familyId: String,
+    navController: NavHostController
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -198,7 +211,9 @@ fun CalendarPage(
                 FloatingActionButton(
                     onClick = {
                         onMainEvent(MainEvent.UpdateCalenderDate(selectedDay))
-                        //onNavigate(Routes.AddTaskScreen.name)
+                        navController.navigate("createEvent/$userName/$familyId")
+                        Log.d("MESSSAGEEEE- username", userName.toString())
+                        Log.d("MESSSAGEEEE- familyId", familyId)
                     },
                     containerColor = pageColor,
                     contentColor = MaterialTheme.colorScheme.background
@@ -267,7 +282,7 @@ fun CalendarPage(
                 ) {
                     itemsIndexed(items = selectedDayTasks,
                         key = { index, task ->
-                            task.id
+                            "${task.id}+${task.title}+${index}"
                         }) { index, task ->
                         Box(
                             modifier = Modifier.animateItemPlacement(tween(500))
@@ -311,5 +326,5 @@ fun CalendarPage(
 @Composable
 fun CalenderScreenPreview() {
     val tasks = DummyTasks.dummyTasks
-    CalendarPage(tasks, {}, {}, {}, {})
+    //CalendarPage(tasks, {}, {}, {}, {}, "ibo@gmail.com", "1", navController)
 }

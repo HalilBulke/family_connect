@@ -117,19 +117,24 @@ class MainActivity : ComponentActivity() {
 
                         composable(
                             //route = "calendar?${KEY_USER_NAME}=${KEY_USER_NAME}",
-                            route = "calendar/{username}",
+                            route = "calendar/{username}/{familyId}",
                             arguments = listOf(
-                                navArgument("username"){
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                },
+                                navArgument(name = "familyId"){
                                     type = NavType.StringType
                                 }
                             )
-                        ) {backstackEntry ->
+                        ){backstackEntry ->
                             val viewModel: CalendarViewModel = hiltViewModel()
 
                             CalendarScreen(
+                                navController = navController,
                                 userName = backstackEntry.arguments?.getString("username"),
                                 onOkButtonClicked = { navController.navigateUp() } ,
-                                onReTryButtonClicked = { viewModel.retry() }
+                                onReTryButtonClicked = { viewModel.retry() },
+                                familyId = backstackEntry.arguments?.getString("familyId").orEmpty()
                             )
                         }
 

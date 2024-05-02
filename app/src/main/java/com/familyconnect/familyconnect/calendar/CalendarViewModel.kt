@@ -57,7 +57,7 @@ class CalendarViewModel @Inject constructor(
                         response.body()?.map {
                             Task(
                                 id = it.id ?: 0,
-                                title = "Task ${it.description}",
+                                title = "${it.name} ${it.description}",
                                 isCompleted = it.status == "COMPLETED",
                                 startTime = convertToLocalTime(it.startDate),
                                 endTime = convertToLocalTime(it.dueDate),
