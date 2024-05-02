@@ -191,7 +191,7 @@ fun AllTasksScreenPage(
                                             0xFF4CAF50
                                         )
                                         ),
-                                        onClick = { onAcceptButtonClicked(task.taskAssigneeUserName,task.taskId) },
+                                        onClick = { onAcceptButtonClicked(task.taskCreatorUserName,task.taskId) },
                                         modifier = Modifier.padding(end = 8.dp)
                                     ) {
                                         Text(text = "Approve")
@@ -201,7 +201,7 @@ fun AllTasksScreenPage(
                                             0xFFF44336
                                         )
                                         ),
-                                        onClick = { onRejectButtonClicked(task.taskAssigneeUserName,task.taskId) }
+                                        onClick = { onRejectButtonClicked(task.taskCreatorUserName,task.taskId) }
                                     ) {
                                         Text(text = "Reject")
                                     }
