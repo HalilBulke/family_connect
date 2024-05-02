@@ -15,36 +15,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.rounded.Face
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,9 +47,6 @@ import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.ItemCard
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
 import com.familyconnect.familyconnect.progressGetChild.Progress
-import com.familyconnect.familyconnect.showallgiventasks.AllTasksScreenPage
-import com.familyconnect.familyconnect.showallgiventasks.AllTasksUiState
-import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -162,9 +152,9 @@ fun AllProgressPage(
                             ) {
                                 Text(text = "Progress Name: ${progress.progressName}", fontSize = 20.sp)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = "Created By: ${progress.createdBy}", fontSize = 16.sp)
+                                Text(text = "Created By: ${progress.createdBy.substringBefore("@")}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Assigned To: ${progress.assignedTo}", fontSize = 16.sp)
+                                Text(text = "Assigned To: ${progress.assignedTo.substringBefore("@")}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(text = "Due Date: ${(progress.dueDate.take(10))}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(16.dp))

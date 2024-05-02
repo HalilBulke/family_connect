@@ -143,9 +143,9 @@ fun ChildAllProgressPage(
                             ) {
                                 Text(text = "Progress Name: ${progress.progressName}", fontSize = 20.sp)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = "Created By: ${progress.createdBy}", fontSize = 16.sp)
+                                Text(text = "Created By: ${progress.createdBy.substringBefore("@")}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Assigned To: ${progress.assignedTo}", fontSize = 16.sp)
+                                Text(text = "Assigned To: ${progress.assignedTo.substringBefore("@")}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(text = "Due Date: ${(progress.dueDate.take(10))}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(16.dp))

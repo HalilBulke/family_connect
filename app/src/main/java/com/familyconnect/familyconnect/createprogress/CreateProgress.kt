@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -96,7 +98,6 @@ fun CreateProgressPage(
 ) {
     var progressName by remember { mutableStateOf("") }
     var quota by remember { mutableStateOf("") }
-    var currentStatus by remember { mutableStateOf("") }
     var rewards by remember { mutableStateOf("") }
     var assignedTo by remember { mutableStateOf("") }
 
@@ -178,21 +179,15 @@ fun CreateProgressPage(
             )
             AppInputField(
                 value = quota,
-                onValueChange = { quota = it },
+                onValueChange = { newValue ->
+                    // Only allow numeric input that can be parsed as Int
+                    if (newValue.all { it.isDigit() }) {
+                        quota = newValue
+                    }
+                },
                 placeholderText = "Quota",
                 isResponseError = false,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedTextColor = Color.Black,
-                    disabledBorderColor = Color.Gray,
-                    focusedBorderColor = pageColor,
-                    unfocusedBorderColor = pageColor,
-                ),
-            )
-            AppInputField(
-                value = currentStatus,
-                onValueChange = { currentStatus = it },
-                placeholderText = "Current Status",
-                isResponseError = false,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     unfocusedTextColor = Color.Black,
                     disabledBorderColor = Color.Gray,
@@ -238,7 +233,7 @@ fun CreateProgressPage(
                     val progress = CreateProgressRequestBody(
                         progressName = progressName,
                         quota = quota.toIntOrNull() ?: 0,
-                        currentStatus = currentStatus.toIntOrNull() ?: 0,
+                        currentStatus = 0,
                         dueDate = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString(),
                         createdBy = username,
                         assignedTo = assignedTo,
