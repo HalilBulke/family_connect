@@ -12,4 +12,11 @@ interface FamilyApiService {
 
     @GET("family/getFamilyMembersInformation")
     suspend fun getFamilyMembers(@Query("userName") userName: String): Response<List<FamilyMembers>>
+
+    @GET("family/getSpins")
+    suspend fun getSpinWheels(@Query("username") userName: String): Response<List<SpinWheel>>
+
+
+    @POST("family/setReward")
+    suspend fun setReward(@Body familySpinDataDTO: FamilySpinDataDTO): Response<FamilySpinDataDTO>
 }

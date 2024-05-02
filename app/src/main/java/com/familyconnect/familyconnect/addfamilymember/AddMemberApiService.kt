@@ -10,4 +10,5 @@ interface AddMemberApiService {
     @POST("family/addFamilyMember")
     suspend fun addFamilyMember(@Query("familyId") familyId: Int,
                                 @Body userNames: List<String>): Response<AddFamilyMemberResponse>
+
 }

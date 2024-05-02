@@ -97,6 +97,7 @@ fun CreateProgressPage(
     var progressName by remember { mutableStateOf("") }
     var quota by remember { mutableStateOf("") }
     var currentStatus by remember { mutableStateOf("") }
+    var rewards by remember { mutableStateOf("") }
     var assignedTo by remember { mutableStateOf("") }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -199,6 +200,18 @@ fun CreateProgressPage(
                     unfocusedBorderColor = pageColor,
                 ),
             )
+            AppInputField(
+                value = rewards,
+                onValueChange = { rewards = it },
+                placeholderText = "Add Rewards",
+                isResponseError = false,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedTextColor = Color.Black,
+                    disabledBorderColor = Color.Gray,
+                    focusedBorderColor = pageColor,
+                    unfocusedBorderColor = pageColor,
+                ),
+            )
             DatePicker(
                 state = datePickerState,
                 title = null,
@@ -228,7 +241,8 @@ fun CreateProgressPage(
                         currentStatus = currentStatus.toIntOrNull() ?: 0,
                         dueDate = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString(),
                         createdBy = username,
-                        assignedTo = assignedTo
+                        assignedTo = assignedTo,
+                        rewards = rewards.split(","),
                     )
                     viewModel.addProgress(progress)
                 },

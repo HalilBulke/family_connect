@@ -86,6 +86,7 @@ fun MainDashboardView(
     viewModel.dashboardItems[0].route = "calendar/$username"
     viewModel.dashboardItems[1].route = "createTask/$username"
     viewModel.dashboardItems[2].route = "createFamily/$username"
+    viewModel.dashboardItems[3].route = "spinWheel/$username"
     viewModel.dashboardItems[4].route = "getTaskchild/$username"
     viewModel.dashboardItems[5].route = "displayFamily/$username"
     viewModel.dashboardItems[6].route = "addFamilyMember/$famID"

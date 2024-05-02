@@ -23,6 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,6 +65,8 @@ fun AllProgressScreen(
     viewModel: AllProgressViewModel = hiltViewModel(),
     onOkButtonClicked: () -> Unit,
     onReTryButtonClicked:() -> Unit,
+    onAcceptButtonClicked: (String, Int) -> Unit,
+    onRejectButtonClicked: (String, Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -80,6 +84,8 @@ fun AllProgressScreen(
             AllProgressPage(
                 allProgress = (uiState as AllProgressUiState.Success).allProgressList,
                 onOkButtonClicked = onOkButtonClicked,
+                onAcceptButtonClicked = onAcceptButtonClicked,
+                onRejectButtonClicked = onRejectButtonClicked,
             )
         }
     }
@@ -90,7 +96,9 @@ fun AllProgressScreen(
 @Composable
 fun AllProgressPage(
     allProgress: List<Progress>?,
-    onOkButtonClicked: () -> Unit
+    onOkButtonClicked: () -> Unit,
+    onAcceptButtonClicked: (String, Int) -> Unit,
+    onRejectButtonClicked: (String, Int) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pageColor = Color(0xFF8BC34A)
@@ -171,6 +179,31 @@ fun AllProgressPage(
                                     text = "Progress: ${progress.currentStatus}/${progress.quota}",
                                     fontSize = 16.sp
                                 )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                            0xFF4CAF50
+                                        )
+                                        ),
+                                        onClick = { onAcceptButtonClicked(progress.createdBy,progress.progressId) },
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    ) {
+                                        Text(text = "Approve")
+                                    }
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                            0xFFF44336
+                                        )
+                                        ),
+                                        onClick = { onRejectButtonClicked(progress.createdBy,progress.progressId) }
+                                    ) {
+                                        Text(text = "Reject")
+                                    }
+                                }
                             }
                         }
                     }

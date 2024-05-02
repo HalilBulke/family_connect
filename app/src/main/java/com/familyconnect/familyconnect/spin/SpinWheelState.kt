@@ -49,10 +49,18 @@ data class SpinWheelState(
 
 
         scope.launch {
-            val destinationDegree = getDegreeFromSectionWithRandom(items, sectionToStop)
+            val destinationDegree = getDegreeFromSection(items, sectionToStop)
+            Log.d("destinationDegree", destinationDegree.toString())
+
+            //val targetValue =  rotation.value + (stopNbTurn * 360f) + destinationDegree + (360f - (rotation.value % 360f))
+            val currentRotation = rotation.value % 360f
+            val totalDegreesToRotate = (stopNbTurn * 360f) + destinationDegree
+            val remainingDegrees = 360f - currentRotation
+            val targetValue = rotation.value + totalDegreesToRotate + remainingDegrees + 360
+            Log.d("targetValue", targetValue.toString())
 
             rotation.animateTo(
-                targetValue = rotation.value + (stopNbTurn * 360f) + destinationDegree + (360f - (rotation.value % 360f)),
+                targetValue = targetValue,//rotation.value + (stopNbTurn * 360f) + destinationDegree + (360f - (rotation.value % 360f)),
                 animationSpec = tween(
                     durationMillis = stopDuration.inWholeMilliseconds.toInt(),
                     easing = EaseOutQuad

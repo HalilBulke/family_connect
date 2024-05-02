@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.showallgiventasks.AllTasksUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -50,24 +52,39 @@ class ChildTasksViewModel @Inject constructor(
         }
     }
 
-    /*
-    fun completeTask(username: String, taskId: Int) {
+    fun acceptTask(userName: String, taskId: Int) {
         viewModelScope.launch {
+            _uiState.value = ChildTasksUiState.Loading
+            delay(500)
             try {
-
-                Log.d("completeTask", "Completing task with taskId: $taskId")
-                val response = taskRepository.setTaskPending(username, taskId)
-                if (response.isSuccessful) {
-                    // Handle successful task completion, maybe update the UI or task list
-                    fetchTasks(username)  // Refresh the list or handle UI update
+                val acceptTask = taskRepository.acceptTask(userName, taskId)
+                if (acceptTask.isSuccessful) {
+                    getChildTasks(userName)
                 } else {
-                    _errorMessage.value = "Failed to complete task: ${response.message()}"
+                    _uiState.value = ChildTasksUiState.Error
                 }
             } catch (e: Exception) {
-                _errorMessage.value = "An error occurred: ${e.localizedMessage}"
+                Log.d("catch error", e.toString())
+                _uiState.value = ChildTasksUiState.Error
             }
         }
     }
 
-     */
+    fun rejectTask(userName: String, taskId: Int) {
+        viewModelScope.launch {
+            _uiState.value = ChildTasksUiState.Loading
+            delay(500)
+            try {
+                val rejectTask = taskRepository.rejectTask(userName,taskId)
+                if (rejectTask.isSuccessful) {
+                    getChildTasks(userName)
+                } else {
+                    _uiState.value = ChildTasksUiState.Error
+                }
+            } catch (e: Exception) {
+                Log.d("catch error", e.toString())
+                _uiState.value = ChildTasksUiState.Error
+            }
+        }
+    }
 }

@@ -1,46 +1,61 @@
 package com.familyconnect.familyconnect.progressGetChild
 
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.allProgress.AllProgressUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
+
+sealed interface ChildProgressUiState {
+    object Loading : ChildProgressUiState
+    object Error : ChildProgressUiState
+    data class Success(val allProgressList: List<Progress>?) : ChildProgressUiState
+}
 
 @HiltViewModel
 class ProgressViewModel @Inject constructor(
-    private val taskRepository: ProgressRepository
+    private val getProgressRepository: GetProgressRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _tasks = MutableLiveData<List<Progress>>()
-    val tasks: LiveData<List<Progress>> = _tasks
+    private val _uiState = MutableStateFlow<ChildProgressUiState>(ChildProgressUiState.Loading)
+    val uiState: StateFlow<ChildProgressUiState> = _uiState
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val userName: String
+        get() = savedStateHandle.get<String>("username").orEmpty()
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    init {
+        Log.d("username", userName)
+        loadAllProgress(userName = userName)
+    }
 
-    fun fetchTasks(userName: String) {
-        _isLoading.value = true
+    fun retry() {
+        Log.d("retry", userName)
+        loadAllProgress(userName = userName)
+    }
+
+    private fun loadAllProgress(userName: String) {
         viewModelScope.launch {
             try {
-                val response = taskRepository.getProgressByUsername(userName)
+                val response = getProgressRepository.getProgressByUsername(userName)
+
                 if (response.isSuccessful) {
-                    val responseData = response.body()
-                    if (!responseData.isNullOrEmpty()) {
-                        _tasks.value = responseData
-                    } else {
-                        _errorMessage.value = "No tasks found"
-                    }
+                    _uiState.value = ChildProgressUiState.Success(
+                        response.body()
+                    )
                 } else {
-                    _errorMessage.value = "Error fetching tasks: ${response.message()}"
+                    _uiState.value = ChildProgressUiState.Error
                 }
-            } catch (e: Exception) {
-                _errorMessage.value = "An error occurred: ${e.localizedMessage}"
-            } finally {
-                _isLoading.value = false
+            } catch (e: IOException) {
+                _uiState.value = ChildProgressUiState.Error
             }
         }
     }

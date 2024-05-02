@@ -63,9 +63,11 @@ class AllTasksViewModel @Inject constructor(
                 if (acceptTask.isSuccessful) {
                     getAllTasks(userName)
                 } else {
+                    Log.d("parent taskı accept", acceptTask.body().toString())
                     _uiState.value = AllTasksUiState.Error
                 }
             } catch (e: Exception) {
+                Log.d("parent taskı accept", e.toString())
                 _uiState.value = AllTasksUiState.Error
             }
         }

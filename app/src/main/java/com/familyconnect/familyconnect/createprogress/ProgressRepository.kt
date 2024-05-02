@@ -42,7 +42,8 @@ data class CreateProgressRequestBody(
     @SerializedName("currentStatus") val currentStatus: Int,
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("createdBy") val createdBy: String,
-    @SerializedName("assignedTo") val assignedTo: String
+    @SerializedName("assignedTo") val assignedTo: String,
+    @SerializedName("rewards") val rewards: List<String>,
 )
 
 data class ProgressResponse(

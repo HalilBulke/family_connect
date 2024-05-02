@@ -9,7 +9,7 @@ interface GetProgressRepository {
     suspend fun getProgressByUsername(userName: String): Response<List<Progress>>
 }
 
-class ProgressRepository @Inject constructor(
+class NetworkGetProgressRepository @Inject constructor(
     private val progressApiService: ProgressApiService
 ) : GetProgressRepository {
     override suspend fun getProgressByUsername(userName: String): Response<List<Progress>> {
@@ -24,5 +24,5 @@ data class Progress(
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("createdBy") val createdBy: String,
     @SerializedName("assignedTo") val assignedTo: String,
-    @SerializedName("progressId") val progressId: Int
+    @SerializedName("id") val progressId: Int
 )

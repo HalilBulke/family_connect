@@ -32,6 +32,8 @@ import com.familyconnect.familyconnect.maindashboard.MainDashboardRepository
 import com.familyconnect.familyconnect.profile.NetworkProfileRepository
 import com.familyconnect.familyconnect.profile.ProfileApiService
 import com.familyconnect.familyconnect.profile.ProfileRepository
+import com.familyconnect.familyconnect.progressGetChild.GetProgressRepository
+import com.familyconnect.familyconnect.progressGetChild.NetworkGetProgressRepository
 import com.familyconnect.familyconnect.progressGetChild.ProgressApiService
 import com.familyconnect.familyconnect.register.NetworkRegisterRepository
 import com.familyconnect.familyconnect.register.RegisterApiService
@@ -150,8 +152,8 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGetTaskRepository(createTaskApiService: TaskApiService): GetTasksRepository {
-        return NetworkGetTasksRepository(createTaskApiService)
+    fun provideGetTaskRepository(taskApiService: TaskApiService): GetTasksRepository {
+        return NetworkGetTasksRepository(taskApiService)
     }
 
     @Provides
@@ -278,5 +280,11 @@ class NetworkModule {
     @Singleton
     fun provideAllProgressApiService(retrofit: Retrofit): AllProgressApiService {
         return retrofit.create(AllProgressApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetProgress(apiService: ProgressApiService): GetProgressRepository {
+        return NetworkGetProgressRepository(apiService)
     }
 }

@@ -34,13 +34,16 @@ import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.profile.ProfileScreen
 import com.familyconnect.familyconnect.progressGetChild.GetProgressScreenchild
+import com.familyconnect.familyconnect.progressGetChild.ProgressViewModel
 import com.familyconnect.familyconnect.register.RegisterScreen
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksScreen
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksViewModel
 import com.familyconnect.familyconnect.spin.SpinWheelScreen
+import com.familyconnect.familyconnect.spin.SpinWheelViewModel
 import com.familyconnect.familyconnect.task.CreateTaskScreen
 import com.familyconnect.familyconnect.task.CreateTaskViewModel
 import com.familyconnect.familyconnect.taskGetchild.ChildTasksScreen
+import com.familyconnect.familyconnect.taskGetchild.ChildTasksViewModel
 import com.familyconnect.familyconnect.ui.theme.FamilyConnectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -126,8 +129,23 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(route = "spinWheel") {
-                            SpinWheelScreen()
+                        composable(route = "spinWheel/{username}",
+                            arguments = listOf(
+                                navArgument("username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        ){backstackEntry ->
+                            val viewModel: SpinWheelViewModel = hiltViewModel()
+
+                            SpinWheelScreen(
+                                userName = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() } ,
+                                viewModel = viewModel,
+                                goRewardsScreen = {
+                                    //navController.navigate()
+                                }
+                            )
 
                         }
 
@@ -183,9 +201,17 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
+                            val viewModel: ChildTasksViewModel = hiltViewModel()
+
                             ChildTasksScreen(
                                 username = backstackEntry.arguments?.getString("username"),
                                 onOkButtonClicked = { navController.navigateUp() } ,
+                                onAcceptButtonClicked = {username , taskId ->
+                                    viewModel.acceptTask(username, taskId)
+                                },
+                                onRejectButtonClicked = {username , taskId ->
+                                    viewModel.rejectTask(username, taskId)
+                                },
                             )
                         }
 
@@ -211,8 +237,13 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
-                            GetProgressScreenchild(username = backstackEntry.arguments?.getString("username"))
+                            val viewModel: ProgressViewModel = hiltViewModel()
 
+                            GetProgressScreenchild(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() },
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
                         }
 
                         composable(route = "displayFamily/{username}",
@@ -288,6 +319,12 @@ class MainActivity : ComponentActivity() {
                                 username = backstackEntry.arguments?.getString("username"),
                                 onOkButtonClicked = { navController.navigateUp() },
                                 onReTryButtonClicked = { viewModel.retry() },
+                                onAcceptButtonClicked = {username , progressId ->
+                                    viewModel.completeProgress(username, progressId)
+                                },
+                                onRejectButtonClicked = {username , progressId ->
+                                    viewModel.cancelProgress(username, progressId)
+                                },
                             )
                         }
                         composable(route = "createEvent/{username}/{familyId}",

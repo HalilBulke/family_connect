@@ -3,24 +3,36 @@ package com.familyconnect.familyconnect.taskGetchild
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,14 +41,20 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.familyconnect.familyconnect.R
 import com.familyconnect.familyconnect.allProgress.AllProgressPage
 import com.familyconnect.familyconnect.allProgress.AllProgressUiState
+import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
+import com.familyconnect.familyconnect.commoncomposables.ItemCard
 import com.familyconnect.familyconnect.progressGetChild.Progress
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -47,6 +65,8 @@ fun ChildTasksScreen(
     username: String?,
     viewModel: ChildTasksViewModel = hiltViewModel(),
     onOkButtonClicked: () -> Unit,
+    onAcceptButtonClicked: (String, Int) -> Unit,
+    onRejectButtonClicked: (String, Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -64,144 +84,162 @@ fun ChildTasksScreen(
             ChildTasksPage(
                 allTasks = (uiState as ChildTasksUiState.Success).allTasks,
                 onOkButtonClicked = onOkButtonClicked,
+                onAcceptButtonClicked = onAcceptButtonClicked,
+                onRejectButtonClicked = onRejectButtonClicked,
             )
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ChildTasksPage(
     allTasks: List<Task>?,
-    onOkButtonClicked: () -> Unit
+    onOkButtonClicked: () -> Unit,
+    onAcceptButtonClicked: (String, Int) -> Unit,
+    onRejectButtonClicked: (String, Int) -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val pageColor = Color(0xFF8BC34A)
 
-}
-
-
-@Composable
-fun LoadingScreen() {
-    Text(
-        text = "Loading...",
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface
-    )
-}
-
-@Composable
-fun ErrorScreen(errorMessage: String) {
-    Text(
-        text = "Error: $errorMessage",
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.error
-    )
-}
-
-@Composable
-fun NoTasksScreen() {
-    Text(
-        text = "No tasks assigned",
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface
-    )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun TaskList(tasks: List<Task>, onTaskComplete: (String, Int) -> Unit) {
-    LazyColumn {
-        items(tasks) { task ->
-            TaskItem(task = task, onTaskComplete = onTaskComplete)
-        }
-    }
-}
-
-
-val customFont = TextStyle(fontSize = 24.sp);
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun TaskItem(task: Task, onTaskComplete: (String, Int) -> Unit) {
-    val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")  // Custom pattern for year, month, and day
-    val formattedDate = try {
-        OffsetDateTime.parse(task.taskDueDate).format(dateTimeFormatter)
-    } catch (e: Exception) {
-        task.taskDueDate  // Fallback to original date if parsing fails
-    }
-
-    var showDetails by remember { mutableStateOf(false) }
-    val backgroundColor = when (task.status) {
-        "IN_PROGRESS" -> Color.Yellow
-        "PENDING" -> Color.Blue
-        "FAILED" -> Color.Red
-        "COMPLETED" -> Color.Green
-        else -> Color.Gray  // Default color if none of the statuses match
-    }
-
-    Box(
-        modifier = Modifier
-            .padding(8.dp)
-            .background(color = backgroundColor, shape = MaterialTheme.shapes.medium)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Task ID: ${task.taskId} - ${task.taskName}", style = customFont)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Due: $formattedDate", style = customFont)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "Points: ${task.taskRewardPoints}", style = customFont)
-            Spacer(modifier = Modifier.height(4.dp))
-
-            if (task.status == "PENDING") {
-                Text(text = "WAITING FOR PARENTS APPROVAL", style = customFont, color = Color.White)
-            }
-            else if (task.status == "FAILED") {
-                Text(text = "PARENT REJECTED", style = customFont, color = Color.White)
-            }
-
-
-            Spacer(modifier = Modifier.height(12.dp))
-            if (task.status == "IN_PROGRESS") {
-                Row {
-                    Button(
-                        onClick = { onTaskComplete(task.taskAssigneeUserName, task.taskId) },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    ) {
-                        Text("Complete Task", color = Color.White)
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(
-                        onClick = { showDetails = !showDetails },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-                    ) {
-                        Text("Details", color = Color.White)
-                    }
+    Column {
+        TopAppBar(
+            title = { Text(text = "My Tasks") },
+            navigationIcon = {
+                IconButton(onClick = { onOkButtonClicked() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Go back"
+                    )
                 }
-            } else if (task.status != "COMPLETED") {
-                Button(
-                    onClick = { showDetails = !showDetails },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-                ) {
-                    Text("Details", color = Color.White)
-                }
-            }
-        }
-    }
-
-    if (showDetails) {
-        AlertDialog(
-            onDismissRequest = { showDetails = false },
-            title = { Text("Task Description") },
-            text = { Text(task.taskDescription) },
-            confirmButton = {
-                TextButton(
-                    onClick = { showDetails = false }
-                ) {
-                    Text("Close")
-                }
-            }
+            },
+            scrollBehavior = scrollBehavior,
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = pageColor,
+                actionIconContentColor = pageColor,
+                navigationIconContentColor = Color.White,
+                scrolledContainerColor = pageColor,
+                titleContentColor = Color(0xFFFFFFFF),
+            )
         )
+        ItemCard(
+            Modifier.padding(4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.all_progress),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    contentScale = ContentScale.Fit,
+                )
+            }
+        }
+        if (allTasks.isNullOrEmpty()) {
+            EmptyTaskComponent()
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 8.dp),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                items(allTasks) { task ->
+
+                    val backgroundColor = when (task.status) {
+                        "IN_PROGRESS" -> Color(0xFF8BC34A)
+                        "PENDING" -> Color(0xFFFF9800)
+                        "FAILED" -> Color(0xFFF44336)
+                        "COMPLETED" -> Color(0xFF009688)
+                        else -> Color.Gray
+                    }
+
+                    Box(
+                        modifier = Modifier.animateItemPlacement(tween(500))
+                    ) {
+                        ItemCard(
+                            modifier = Modifier.padding(4.dp),
+                            cardColor = backgroundColor
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "Task Name: ${task.taskName}",
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Description: ${task.taskDescription}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Creator: ${task.taskCreatorUserName}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Assignee: ${task.taskAssigneeUserName}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Due Date: ${task.taskDueDate.take(10)}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Task Status: ${task.status}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Reward Points: ${task.taskRewardPoints}",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                            0xFF4CAF50
+                                        )
+                                        ),
+                                        onClick = {
+                                            onAcceptButtonClicked(task.taskAssigneeUserName,task.taskId)
+                                        },
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    ) {
+                                        Text(text = "Approve")
+                                    }
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                            0xFFF44336
+                                        )
+                                        ),
+                                        onClick = {
+                                            onRejectButtonClicked(task.taskAssigneeUserName,task.taskId)
+                                        }
+                                    ) {
+                                        Text(text = "Reject")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
-
-
-

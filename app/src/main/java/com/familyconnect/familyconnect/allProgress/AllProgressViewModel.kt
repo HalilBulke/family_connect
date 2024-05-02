@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.familyconnect.familyconnect.calendar.CalenderUiState
 import com.familyconnect.familyconnect.progressGetChild.Progress
+import com.familyconnect.familyconnect.showallgiventasks.AllTasksUiState
 import com.familyconnect.familyconnect.task.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -55,6 +57,45 @@ class AllProgressViewModel @Inject constructor(
                     _uiState.value = AllProgressUiState.Error
                 }
             } catch (e: IOException) {
+                _uiState.value = AllProgressUiState.Error
+            }
+        }
+    }
+
+    fun completeProgress(userName: String, progressId: Int) {
+        viewModelScope.launch {
+            _uiState.value = AllProgressUiState.Loading
+            delay(500)
+            try {
+                val acceptTask = allProgressRepository.completeProgress(userName, progressId)
+                if (acceptTask.isSuccessful) {
+                    loadAllProgress(userName)
+                } else {
+                    Log.d("parent taskı accept", acceptTask.body().toString())
+                    _uiState.value = AllProgressUiState.Error
+                }
+            } catch (e: Exception) {
+                Log.d("parent taskı accept", e.toString())
+                _uiState.value = AllProgressUiState.Error
+            }
+        }
+    }
+
+    fun cancelProgress(userName: String, progressId: Int) {
+        viewModelScope.launch {
+            _uiState.value = AllProgressUiState.Loading
+            delay(500)
+            try {
+                val rejectTask = allProgressRepository.cancelProgress(userName,progressId)
+                if (rejectTask.isSuccessful) {
+                    loadAllProgress(userName)
+                } else {
+                    _uiState.value = AllProgressUiState.Error
+                    Log.d("parent progress reject", rejectTask.toString())
+
+                }
+            } catch (e: Exception) {
+                Log.d("catch error", e.toString())
                 _uiState.value = AllProgressUiState.Error
             }
         }
