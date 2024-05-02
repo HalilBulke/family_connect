@@ -127,7 +127,10 @@ fun SpinWheelPage(
             )
         )
         if (spinList.isNullOrEmpty()) {
-            EmptyTaskComponent()
+            EmptyTaskComponent(
+                text = "It seems you have no more spins left at the moment.",
+                color = pageColor
+            )
         } else if (!showSpin){
             ItemCard(
                 Modifier.padding(4.dp)
@@ -244,7 +247,8 @@ fun SpinWheelPage(
                     }
                 }?.toPersistentList() ?: emptyList<SpinWheelItem>().toPersistentList()
             }
-            val randomNumber = Random.nextInt(items.size)
+            var randomNumber by remember { mutableStateOf(0) }
+
             Log.d("items_size", items.size.toString())
             Log.d("random_number", randomNumber.toString())
             val spinState = rememberSpinWheelState(

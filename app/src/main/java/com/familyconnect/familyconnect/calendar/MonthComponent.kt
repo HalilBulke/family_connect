@@ -44,13 +44,15 @@ fun MonthDayComponent(
     isDatePicker: Boolean = false,
     onClick: (LocalDate) -> Unit = {}
 ) {
+    val pageColor = Color(0xFF00BCD4)
+
     val textColor = if (selected) {
-        Color.Cyan
+        Color(0xFF3F51B5)
     } else {
         if (day.position == DayPosition.MonthDate)
-            Color.Black
+            Color(0xFF00BCD4)
         else
-            Color.Gray
+            Color(0xFF2196F3)
     }
 
     val dayTextStyle = if (isDatePicker) {
@@ -68,7 +70,7 @@ fun MonthDayComponent(
             .aspectRatio(1f)
             .padding(6.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(if (selected) Color.Blue else Color.Transparent)
+            .background(if (selected) Color(0xFF00BCD4) else Color.Transparent)
             .border(
                 if (day.date == LocalDate.now()) 2.dp else (-1).dp,
                 Color.Blue,
@@ -93,7 +95,7 @@ fun MonthDayComponent(
                                 modifier = Modifier
                                     .size(4.dp)
                                     .clip(CircleShape)
-                                    .background(Color.Yellow)
+                                    .background(Color(0xFF009688))
                                     .padding(start = 2.dp)
                             )
                         }
@@ -104,7 +106,7 @@ fun MonthDayComponent(
                 modifier = Modifier
                     .size(4.dp)
                     .clip(CircleShape)
-                    .background(if (indicator && day.position == DayPosition.MonthDate) Color.Blue  else Color.Transparent)
+                    .background(if (indicator && day.position == DayPosition.MonthDate) Color(0xFF00BCD4)  else Color.Transparent)
             )
         }
     }
@@ -122,7 +124,7 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 ),
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = Color(0xFF00BCD4),
                 text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
             )
         }

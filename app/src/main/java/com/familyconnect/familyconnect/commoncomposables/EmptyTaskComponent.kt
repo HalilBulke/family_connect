@@ -21,7 +21,11 @@ import androidx.compose.ui.unit.sp
 import com.familyconnect.familyconnect.R
 
 @Composable
-fun EmptyTaskComponent(modifier: Modifier = Modifier) {
+fun EmptyTaskComponent(
+    modifier: Modifier = Modifier,
+    text:String = stringResource(R.string.no_tasks),
+    color: Color = Color(0xFF009688)
+) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center)
     {
         Column(
@@ -34,12 +38,12 @@ fun EmptyTaskComponent(modifier: Modifier = Modifier) {
                 contentDescription = null
             )
             Text(
-                text = stringResource(R.string.no_tasks),
+                text = text,
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                color = Color.Green
+                color = color
             )
         }
     }

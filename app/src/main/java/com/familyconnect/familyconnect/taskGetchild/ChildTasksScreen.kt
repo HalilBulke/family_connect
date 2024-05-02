@@ -125,7 +125,9 @@ fun ChildTasksPage(
             }
         }
         if (allTasks.isNullOrEmpty()) {
-            EmptyTaskComponent()
+            EmptyTaskComponent(
+                color = pageColor
+            )
         } else {
             LazyColumn(
                 modifier = Modifier

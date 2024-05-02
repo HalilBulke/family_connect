@@ -22,6 +22,9 @@ import com.familyconnect.familyconnect.displayfamily.GetFamilyRepository
 import com.familyconnect.familyconnect.family.CreateFamilyApiService
 import com.familyconnect.familyconnect.family.FamilyRepository
 import com.familyconnect.familyconnect.family.NetworkFamilyRepository
+import com.familyconnect.familyconnect.familyRewards.FamilyRewardsApiService
+import com.familyconnect.familyconnect.familyRewards.FamilyRewardsRepository
+import com.familyconnect.familyconnect.familyRewards.FamilyRewardsRepositoryImpl
 import com.familyconnect.familyconnect.login.LoginApiService
 import com.familyconnect.familyconnect.login.LoginRepository
 import com.familyconnect.familyconnect.login.NetworkLoginRepository
@@ -268,6 +271,18 @@ class NetworkModule {
     @Singleton
     fun provideCalenderApiService(retrofit: Retrofit): CalendarApiService {
         return retrofit.create(CalendarApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFamilyRewardsRepository(apiService: FamilyRewardsApiService): FamilyRewardsRepository {
+        return FamilyRewardsRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFamilyRewardsApiService(retrofit: Retrofit): FamilyRewardsApiService {
+        return retrofit.create(FamilyRewardsApiService::class.java)
     }
 
     @Provides

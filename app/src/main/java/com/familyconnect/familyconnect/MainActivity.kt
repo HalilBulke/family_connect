@@ -24,12 +24,16 @@ import com.familyconnect.familyconnect.allProgress.AllProgressScreen
 import com.familyconnect.familyconnect.allProgress.AllProgressViewModel
 import com.familyconnect.familyconnect.calendar.CalendarScreen
 import com.familyconnect.familyconnect.calendar.CalendarViewModel
+import com.familyconnect.familyconnect.childRewards.ChildRewardsScreen
+import com.familyconnect.familyconnect.childRewards.ChildRewardsViewModel
 import com.familyconnect.familyconnect.createevent.CreateEventScreen
 import com.familyconnect.familyconnect.createevent.CreateEventViewModel
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyViewModel
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
+import com.familyconnect.familyconnect.familyRewards.FamilyRewardsScreen
+import com.familyconnect.familyconnect.familyRewards.FamilyRewardsViewModel
 import com.familyconnect.familyconnect.login.LoginScreen
 import com.familyconnect.familyconnect.maindashboard.MainDashboardView
 import com.familyconnect.familyconnect.profile.ProfileScreen
@@ -143,7 +147,7 @@ class MainActivity : ComponentActivity() {
                                 onOkButtonClicked = { navController.navigateUp() } ,
                                 viewModel = viewModel,
                                 goRewardsScreen = {
-                                    //navController.navigate()
+                                    navController.navigate("childRewards/${backstackEntry.arguments?.getString("username")}")
                                 }
                             )
 
@@ -344,6 +348,41 @@ class MainActivity : ComponentActivity() {
                                 username = backstackEntry.arguments?.getString("username").orEmpty(),
                                 familyId = backstackEntry.arguments?.getString("familyId").orEmpty(),
                                 onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
+                        }
+
+                        composable(route = "familyRewards/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            val viewModel: FamilyRewardsViewModel = hiltViewModel()
+
+                            FamilyRewardsScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() },
+                                onReTryButtonClicked = { viewModel.retry() },
+                            )
+                        }
+
+
+                        composable(route = "childRewards/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            val viewModel: ChildRewardsViewModel = hiltViewModel()
+
+                            ChildRewardsScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() },
                                 onReTryButtonClicked = { viewModel.retry() },
                             )
                         }

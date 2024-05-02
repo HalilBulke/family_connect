@@ -138,6 +138,8 @@ fun CalendarPage(
     else
         monthState.lastVisibleMonth.yearMonth.month
 
+    val pageColor = Color(0xFF009688)
+
     Scaffold(topBar = {
         TopAppBar(
             colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -198,8 +200,8 @@ fun CalendarPage(
                         onMainEvent(MainEvent.UpdateCalenderDate(selectedDay))
                         //onNavigate(Routes.AddTaskScreen.name)
                     },
-                    containerColor = Color.Blue,
-                    contentColor = MaterialTheme.colorScheme.secondary
+                    containerColor = pageColor,
+                    contentColor = MaterialTheme.colorScheme.background
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,

@@ -37,7 +37,7 @@ class MainDashboardViewModel @Inject constructor(
             color = Color(0xFF03A9F4)),
         DashboardItem(id = 3, title = "Create Family", icon = R.drawable.family, route = "createFamily", permittedScenarios = listOf(3, 9),
             color = Color(0xFFA47CEC)),
-        DashboardItem(id = 4, title = "Spin Wheel", icon = R.drawable.spin_wheel_icon, route = "spinWheel", permittedScenarios = listOf(2, 4, 9),
+        DashboardItem(id = 4, title = "Spin Wheel", icon = R.drawable.spin_wheel_icon, route = "spinWheel", permittedScenarios = listOf(2, 9),
             color = Color(0xFFFF5722)
         ),
         DashboardItem(id = 5, title = "Show my Tasks", icon = R.drawable.display_tasks, route = "getTaskchild", permittedScenarios = listOf(2, 9),
@@ -58,6 +58,12 @@ class MainDashboardViewModel @Inject constructor(
             color = Color(0xFFE0FFFF)),
         DashboardItem(id = 12, title = "Create Event", icon = R.drawable.event, route = "createEvent", permittedScenarios = listOf(4, 9),
             color = Color(0xFF8BC34A)),
+        DashboardItem(id = 13, title = "Family Rewards", icon = R.drawable.ic_gift, route = "familyRewards", permittedScenarios = listOf(2, 4, 9),
+            color = Color(0xFF00BCD4)
+        ),
+        DashboardItem(id = 14, title = "My Rewards", icon = R.drawable.ic_all_rewards, route = "childRewards", permittedScenarios = listOf(2, 9),
+            color = Color(0xFFFFEB3B)
+        ),
     )
 
     val profileDashboardItem = DashboardItem(id = 12, title = "Profile", icon = R.drawable.profile, route = "profile", permittedScenarios = listOf(2,3,4,9),

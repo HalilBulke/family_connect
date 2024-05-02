@@ -130,7 +130,10 @@ fun AllProgressPage(
             }
         }
         if (allProgress.isNullOrEmpty()) {
-            EmptyTaskComponent()
+            EmptyTaskComponent(
+                text = "There is currently no progress to display.",
+                color = pageColor
+            )
         } else {
 
             LazyColumn(

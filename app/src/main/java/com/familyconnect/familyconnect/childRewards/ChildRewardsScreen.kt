@@ -1,4 +1,4 @@
-package com.familyconnect.familyconnect.progressGetChild
+package com.familyconnect.familyconnect.childRewards
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -9,20 +9,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -31,7 +31,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -43,51 +42,50 @@ import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.ItemCard
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
-
+import com.familyconnect.familyconnect.familyRewards.Reward
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun GetProgressScreenchild(
+fun ChildRewardsScreen(
     username: String?,
-    viewModel: ProgressViewModel = hiltViewModel(),
+    viewModel: ChildRewardsViewModel = hiltViewModel(),
     onOkButtonClicked: () -> Unit,
     onReTryButtonClicked:() -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     when(uiState) {
-        is ChildProgressUiState.Error -> {
+        is ChildRewardsUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
                 onClickSecondButton = { onReTryButtonClicked() },
             )
         }
-        is ChildProgressUiState.Loading -> {
+        is ChildRewardsUiState.Loading -> {
             LoadingScreen()
         }
-        is ChildProgressUiState.Success -> {
-            ChildAllProgressPage(
-                allProgress = (uiState as ChildProgressUiState.Success).allProgressList,
+        is ChildRewardsUiState.Success -> {
+            ChildRewardsPage(
+                childRewardsList = (uiState as ChildRewardsUiState.Success).childRewardsList,
                 onOkButtonClicked = onOkButtonClicked,
             )
         }
     }
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ChildAllProgressPage(
-    allProgress: List<Progress>?,
-    onOkButtonClicked: () -> Unit
+fun ChildRewardsPage(
+    childRewardsList: List<Reward>?,
+    onOkButtonClicked: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val pageColor = Color(0xFF8BC34A)
+    val pageColor = Color(0xFFFFEB3B)
 
     Column {
         TopAppBar(
-            title = { Text(text = "All Progresses") },
+            title = { Text(text = "All Family Rewards") },
             navigationIcon = {
                 IconButton(onClick = { onOkButtonClicked() }) {
                     Icon(
@@ -114,16 +112,16 @@ fun ChildAllProgressPage(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.all_progress),
+                    painter = painterResource(id = R.drawable.child_rewards),
                     contentDescription = null,
-                    modifier = Modifier.fillMaxWidth().height(120.dp),
+                    modifier = Modifier.fillMaxWidth().height(240.dp),
                     contentScale = ContentScale.Fit,
                 )
             }
         }
-        if (allProgress.isNullOrEmpty()) {
+        if (childRewardsList.isNullOrEmpty()) {
             EmptyTaskComponent(
-                text = "There is currently no progress to display.",
+                text = "Your reward list is currently empty, complete your progress and earn the rewards",
                 color = pageColor
             )
         } else {
@@ -135,36 +133,33 @@ fun ChildAllProgressPage(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             )
             {
-                itemsIndexed(items = allProgress) { _, progress ->
+                itemsIndexed(items = childRewardsList) { _, reward ->
                     Box(
                         modifier = Modifier.animateItemPlacement(tween(500))
                     ) {
-                        ItemCard(modifier = Modifier.padding(4.dp)) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp)
-                            ) {
-                                Text(text = "Progress Name: ${progress.progressName}", fontSize = 20.sp)
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = "Created By: ${progress.createdBy.substringBefore("@")}", fontSize = 16.sp)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Assigned To: ${progress.assignedTo.substringBefore("@")}", fontSize = 16.sp)
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(text = "Due Date: ${(progress.dueDate.take(10))}", fontSize = 16.sp)
-                                Spacer(modifier = Modifier.height(16.dp))
-                                LinearProgressIndicator(
-                                    progress = progress.currentStatus.toFloat() / progress.quota.toFloat(),
-                                    modifier = Modifier.fillMaxWidth().height(12.dp).clip(
-                                        RoundedCornerShape(8.dp)
-                                    ),
-                                    color = Color(0xFF4CAF50),
-                                    trackColor = Color(0xFFECF1E5),
+                        ItemCard(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
+                            Row {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_rewards_list),
+                                    contentDescription = null,
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(100.dp).padding(horizontal = 16.dp)
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "Progress: ${progress.currentStatus}/${progress.quota}",
-                                    fontSize = 16.sp
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                ) {
+                                    Text(
+                                        text = "Winner of the reward: ${
+                                            reward.rewardOwner.substringBefore(
+                                                "@"
+                                            )
+                                        }", fontSize = 20.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(text = "Reward: ${reward.reward}", fontSize = 16.sp)
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
                             }
                         }
                     }
@@ -173,4 +168,3 @@ fun ChildAllProgressPage(
         }
     }
 }
-
