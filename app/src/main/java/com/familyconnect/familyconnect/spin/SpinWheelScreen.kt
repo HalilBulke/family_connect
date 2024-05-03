@@ -234,28 +234,115 @@ fun SpinWheelPage(
                     "EFC017"
                 ).map { it.toColor() }
             }
+
+            val colors3 = remember {
+                listOf(
+                    "003366",
+                    "004477",
+                    "005588",
+                    "006699",
+                    "0077AA"
+                ).map { it.toColor() }
+            }
+
+            val colors4 = remember {
+                listOf(
+                    "990000",
+                    "CC0000",
+                    "FF3300",
+                    "FF6600",
+                    "FF9900"
+                ).map { it.toColor() }
+            }
+
+            val colors5 = remember {
+                listOf(
+                    "009933",
+                    "339933",
+                    "669933",
+                    "999933",
+                    "CCCC33"
+                ).map { it.toColor() }
+            }
+
+            val colors6 = remember {
+                listOf(
+                    "006699",
+                    "0099CC",
+                    "66CCCC",
+                    "99CCCC",
+                    "0099FF"
+                ).map { it.toColor() }
+            }
+
+            val colors7 = remember {
+                listOf(
+                    "6600CC",
+                    "9900CC",
+                    "CC00CC",
+                    "FF00FF",
+                    "CC66CC"
+                ).map { it.toColor() }
+            }
+
+            val colors8 = remember {
+                listOf(
+                    "330033",
+                    "660033",
+                    "990033",
+                    "CC0033",
+                    "FF0066"
+                ).map { it.toColor() }
+            }
+
+            val colors9 = remember {
+                listOf(
+                    "003399",
+                    "336699",
+                    "669999",
+                    "99CCCC",
+                    "3399FF"
+                ).map { it.toColor() }
+            }
+
+            val colors10 = remember {
+                listOf(
+                    "003300",
+                    "003333",
+                    "003366",
+                    "003399",
+                    "0033CC"
+                ).map { it.toColor() }
+            }
+
+            val allColors = listOf(
+                colors1, colors2, colors3, colors4, colors5,
+                colors6, colors7, colors8, colors9, colors10
+            )
+
             val selectedSpin = spinList.find { it.id == spinId }
 
             val items = remember {
                 selectedSpin?.spinRewards?.mapIndexed { index, reward ->
-                    val colors = if (index % 2 == 0) colors1 else colors2
+                    val colors = allColors[index % allColors.size]
                     SpinWheelItem(
                         colors = colors.toPersistentList()
                     ) {
                         Text(
                             text = reward,
-                            style = TextStyle(color = Color(0xFF4CAF50), fontSize = 20.sp)
+                            style = TextStyle(color = Color.White, fontSize = 20.sp)
                         )
                     }
                 }?.toPersistentList() ?: emptyList<SpinWheelItem>().toPersistentList()
             }
             var randomNumber by remember { mutableStateOf(0) }
+            randomNumber = Random.nextInt(items.size)
 
             Log.d("items_size", items.size.toString())
             Log.d("random_number", randomNumber.toString())
             val spinState = rememberSpinWheelState(
                 items = items,
-                backgroundImage = R.drawable.spin_wheel,
+                backgroundImage = R.drawable.spin_wheel1,
                 centerImage = R.drawable.ic_family_connect,
                 indicatorImage = R.drawable.spin_wheel_tick,
                 onSpinningFinished = null,
