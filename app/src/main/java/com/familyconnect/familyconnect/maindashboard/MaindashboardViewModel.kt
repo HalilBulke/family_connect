@@ -64,6 +64,9 @@ class MainDashboardViewModel @Inject constructor(
         DashboardItem(id = 14, title = "My Rewards", icon = R.drawable.ic_all_rewards, route = "childRewards", permittedScenarios = listOf(2, 9),
             color = Color(0xFFFFEB3B)
         ),
+        DashboardItem(id = 15, title = "Family Hub", icon = R.drawable.family111, route = "familyHub", permittedScenarios = listOf(2, 4, 9),
+            color = Color(0xFFC750DB)
+        ),
     )
 
     val profileDashboardItem = DashboardItem(id = 12, title = "Profile", icon = R.drawable.profile, route = "profile", permittedScenarios = listOf(2,3,4,9),

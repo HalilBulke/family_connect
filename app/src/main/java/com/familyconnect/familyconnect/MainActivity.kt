@@ -32,6 +32,8 @@ import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyViewModel
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
+import com.familyconnect.familyconnect.familyHub.FamilyHubScreen
+import com.familyconnect.familyconnect.familyHub.FamilyHubViewModel
 import com.familyconnect.familyconnect.familyRewards.FamilyRewardsScreen
 import com.familyconnect.familyconnect.familyRewards.FamilyRewardsViewModel
 import com.familyconnect.familyconnect.login.LoginScreen
@@ -389,6 +391,32 @@ class MainActivity : ComponentActivity() {
                                 username = backstackEntry.arguments?.getString("username"),
                                 onOkButtonClicked = { navController.navigateUp() },
                                 onReTryButtonClicked = { viewModel.retry() },
+                            )
+                        }
+
+                        composable(route = "familyHub/{username}",
+                            arguments = listOf(
+                                navArgument(name = "username"){
+                                    type = NavType.StringType
+                                }
+                            )
+                        )
+                        {backstackEntry ->
+                            val viewModel: FamilyHubViewModel = hiltViewModel()
+
+                            FamilyHubScreen(
+                                username = backstackEntry.arguments?.getString("username"),
+                                onOkButtonClicked = { navController.navigateUp() },
+                                onReTryButtonClicked = { viewModel.retry() },
+                                onSendChatClickListener = { message ->
+                                    viewModel.sendMessage(message)
+                                },
+                                onSendSurveyClickListener = { survey ->
+                                    viewModel.sendSurvey(survey)
+                                },
+                                onVoteSurveyClickListener = { vote ->
+                                    viewModel.voteSurvey(vote)
+                                }
                             )
                         }
                     }
