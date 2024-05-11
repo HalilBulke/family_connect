@@ -22,6 +22,9 @@ import com.familyconnect.familyconnect.displayfamily.GetFamilyRepository
 import com.familyconnect.familyconnect.family.CreateFamilyApiService
 import com.familyconnect.familyconnect.family.FamilyRepository
 import com.familyconnect.familyconnect.family.NetworkFamilyRepository
+import com.familyconnect.familyconnect.familyHub.FamilyHubApiService
+import com.familyconnect.familyconnect.familyHub.FamilyHubRepository
+import com.familyconnect.familyconnect.familyHub.NetworkFamilyHubRepository
 import com.familyconnect.familyconnect.familyRewards.FamilyRewardsApiService
 import com.familyconnect.familyconnect.familyRewards.FamilyRewardsRepository
 import com.familyconnect.familyconnect.familyRewards.FamilyRewardsRepositoryImpl
@@ -60,7 +63,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 //Enter your local ip as subdomain instead of 192.168.1.2
-private const val BASE_URL = "http://192.168.1.83:8000"
+private const val BASE_URL = "http://192.168.1.3:8000"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -301,5 +304,18 @@ class NetworkModule {
     @Singleton
     fun provideGetProgress(apiService: ProgressApiService): GetProgressRepository {
         return NetworkGetProgressRepository(apiService)
+    }
+
+    //Family Hub
+    @Provides
+    @Singleton
+    fun provideFamilyHub(apiService: FamilyHubApiService): FamilyHubRepository {
+        return NetworkFamilyHubRepository(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFamilyHubApiService(retrofit: Retrofit): FamilyHubApiService {
+        return retrofit.create(FamilyHubApiService::class.java)
     }
 }
