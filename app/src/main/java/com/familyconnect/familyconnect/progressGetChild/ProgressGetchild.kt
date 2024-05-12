@@ -136,10 +136,20 @@ fun ChildAllProgressPage(
             )
             {
                 itemsIndexed(items = allProgress) { _, progress ->
+
+                    val backgroundColor = when (progress.progressStatus) {
+                        "IN_PROGRESS" -> Color(0xFF8BC34A)
+                        "CANCELLED" -> Color(0xFFF44336)
+                        "COMPLETED" -> Color(0xFF009688)
+                        else -> Color.Gray
+                    }
+
                     Box(
                         modifier = Modifier.animateItemPlacement(tween(500))
                     ) {
-                        ItemCard(modifier = Modifier.padding(4.dp)) {
+                        ItemCard(
+                            modifier = Modifier.padding(4.dp),
+                            cardColor = backgroundColor) {
                             Column(
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -151,6 +161,11 @@ fun ChildAllProgressPage(
                                 Text(text = "Assigned To: ${progress.assignedTo.substringBefore("@")}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(text = "Due Date: ${(progress.dueDate.take(10))}", fontSize = 16.sp)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Status: ${progress.progressStatus}",
+                                    fontSize = 16.sp
+                                )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 LinearProgressIndicator(
                                     progress = progress.currentStatus.toFloat() / progress.quota.toFloat(),

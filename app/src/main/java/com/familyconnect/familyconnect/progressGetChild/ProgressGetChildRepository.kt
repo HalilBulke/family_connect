@@ -24,5 +24,6 @@ data class Progress(
     @SerializedName("dueDate") val dueDate: String,
     @SerializedName("createdBy") val createdBy: String,
     @SerializedName("assignedTo") val assignedTo: String,
-    @SerializedName("id") val progressId: Int
+    @SerializedName("id") val progressId: Int,
+    @SerializedName("progressStatus") val progressStatus: String
 )

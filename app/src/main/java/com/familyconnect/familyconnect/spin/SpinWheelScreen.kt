@@ -58,6 +58,7 @@ import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
 import com.familyconnect.familyconnect.displayfamily.FamilySpinDataDTO
 import com.familyconnect.familyconnect.displayfamily.SpinWheel
 import com.familyconnect.familyconnect.util.toColor
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlin.random.Random
 
@@ -102,7 +103,7 @@ fun SpinWheelPage(
 ) {
     var showSpin by remember { mutableStateOf(false) }
     var spinId by remember { mutableStateOf(0) }
-    var showSpinButton by remember { mutableStateOf(true) }
+
 
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -338,109 +339,142 @@ fun SpinWheelPage(
             var randomNumber by remember { mutableStateOf(0) }
             randomNumber = Random.nextInt(items.size)
 
-            Log.d("items_size", items.size.toString())
-            Log.d("random_number", randomNumber.toString())
-            val spinState = rememberSpinWheelState(
-                items = items,
-                backgroundImage = R.drawable.spin_wheel1,
-                centerImage = R.drawable.ic_family_connect,
-                indicatorImage = R.drawable.spin_wheel_tick,
-                onSpinningFinished = null,
+            WheelItem(
+                items,
+                spinId,
+                pageColor,
+                viewModel,
+                goRewardsScreen,
+                onOkButtonClicked,
+                randomNumber,
+                selectedSpin
             )
-            Log.d("kazanılan ödül", items[randomNumber].toString())
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(modifier = Modifier.size(300.dp)) {
-                    SpinWheelComponent(spinState)
-                }
-                Spacer(modifier = Modifier.size(80.dp))
+        }
+    }
+}
 
-                if (showSpinButton) {
-                    AppButton(
-                        buttonText = "SPIN",
-                        isLoading = false,
-                        onClick = {
-                            showSpinButton = false
-                            spinState.stoppingWheel(randomNumber)
-                        },
-                        buttonColor = pageColor,
-                    )
-                }
-                AnimatedVisibility(
-                    visible = showSpinButton.not(),
-                    enter = fadeIn(
-                        animationSpec = tween(delayMillis = 8000, durationMillis = 1000),
-                        initialAlpha = 0f
-                    ),
+@Composable
+private fun WheelItem(
+    items: PersistentList<SpinWheelItem>,
+    spinId: Int,
+    pageColor: Color,
+    viewModel: SpinWheelViewModel,
+    goRewardsScreen: () -> Unit,
+    onOkButtonClicked: () -> Unit,
+    randomNumber: Int,
+    selectedSpin: SpinWheel?
+) {
+    var showSpinButton by remember { mutableStateOf(true) }
+
+
+
+    Log.d("items_size", items.size.toString())
+    Log.d("random_number", randomNumber.toString())
+    val spinState = rememberSpinWheelState(
+        items = items,
+        backgroundImage = R.drawable.spin_wheel1,
+        centerImage = R.drawable.ic_family_connect,
+        indicatorImage = R.drawable.spin_wheel_tick,
+        onSpinningFinished = null,
+    )
+    Log.d("kazanılan ödül", items[randomNumber].toString())
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Box(modifier = Modifier.size(300.dp)) {
+            SpinWheelComponent(spinState)
+        }
+        Spacer(modifier = Modifier.size(80.dp))
+
+        if (showSpinButton) {
+            AppButton(
+                buttonText = "SPIN",
+                isLoading = false,
+                onClick = {
+                    showSpinButton = false
+                    spinState.stoppingWheel(randomNumber)
+                },
+                buttonColor = pageColor,
+            )
+        }
+        AnimatedVisibility(
+            visible = showSpinButton.not(),
+            enter = fadeIn(
+                animationSpec = tween(delayMillis = 8000, durationMillis = 1000),
+                initialAlpha = 0f
+            ),
+        ) {
+            ItemCard {
+                Column(
+                    modifier = Modifier.padding(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    ItemCard {
-                        Column(
-                            modifier = Modifier.padding(4.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Congratulations you have won: \n ${selectedSpin?.spinRewards?.get(randomNumber)}",
-                                style = MaterialTheme.typography.headlineMedium,
-                                color = Color(0xFFFF9800),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                textAlign = TextAlign.Center
+                    Text(
+                        text = "Congratulations you have won: \n ${
+                            selectedSpin?.spinRewards?.get(
+                                randomNumber
                             )
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                Button(
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                        0xFF4CAF50
+                        }",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color(0xFFFF9800),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(
+                                    0xFF4CAF50
+                                )
+                            ),
+                            onClick = {
+                                if (selectedSpin != null) {
+                                    viewModel.setReward(
+                                        FamilySpinDataDTO(
+                                            id = selectedSpin.id,
+                                            username = selectedSpin.spinOwner,
+                                            prize = selectedSpin.spinRewards[randomNumber],
+                                        )
                                     )
-                                    ),
-                                    onClick = {
-                                        if (selectedSpin != null) {
-                                            viewModel.setReward(
-                                                FamilySpinDataDTO(
-                                                    id = selectedSpin.id,
-                                                    username = selectedSpin.spinOwner,
-                                                    prize = selectedSpin.spinRewards[randomNumber],
-                                                )
-                                            )
-                                        }
-                                        goRewardsScreen()
-                                    },
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(text = "View Prize Page")
                                 }
-                                Button(
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                        0xFFF44336
+                                goRewardsScreen()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "View Prize Page")
+                        }
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(
+                                    0xFFF44336
+                                )
+                            ),
+                            onClick = {
+                                if (selectedSpin != null) {
+                                    viewModel.setReward(
+                                        FamilySpinDataDTO(
+                                            id = selectedSpin.id,
+                                            username = selectedSpin.spinOwner,
+                                            prize = selectedSpin.spinRewards[randomNumber],
+                                        )
                                     )
-                                    ),
-                                    onClick = {
-                                        if (selectedSpin != null) {
-                                            viewModel.setReward(
-                                                FamilySpinDataDTO(
-                                                    id = selectedSpin.id,
-                                                    username = selectedSpin.spinOwner,
-                                                    prize = selectedSpin.spinRewards[randomNumber],
-                                                )
-                                            )
-                                        }
-                                        onOkButtonClicked()
-                                    } ,
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(text = "Go back")
                                 }
-                            }
+                                onOkButtonClicked()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "Go back")
                         }
                     }
                 }

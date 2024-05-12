@@ -73,7 +73,8 @@ fun MyFamilyPage(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val pageColor = Color(0xFFA47CEC)
-    val creator = family.creatorUserName
+    val creator = family.familyMembers.find { it.userName == family.creatorUserName }?.name
+
     Column {
         TopAppBar(
             title = { Text(text = "My Family") },

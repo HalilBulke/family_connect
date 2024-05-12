@@ -63,6 +63,7 @@ fun CreateFamilyScreen(
         }
         is CreateFamilyUiState.Success -> {
             makeToast(LocalContext.current, "New family created Successfully")
+            onOkButtonClicked()
         }
         is CreateFamilyUiState.Default -> {
             CreateFamilyPage(

@@ -65,8 +65,9 @@ fun CreateTaskScreen(
         is CreateTaskUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
-                onClickSecondButton = { onReTryButtonClicked()
-                }
+                onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as CreateTaskUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as CreateTaskUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is CreateTaskUiState.Loading -> {
@@ -77,6 +78,8 @@ fun CreateTaskScreen(
                 viewModel = viewModel,
                 userName = username,
                 familyMembers = (uiState as CreateTaskUiState.Success).familyMembers.orEmpty(),
+                childNames = (uiState as CreateTaskUiState.Success).childNames.orEmpty(),
+                childUserNames = (uiState as CreateTaskUiState.Success).childUserNames.orEmpty(),
                 onOkButtonClicked = onOkButtonClicked
             )
         }
@@ -86,6 +89,8 @@ fun CreateTaskScreen(
                 viewModel = viewModel,
                 userName = username,
                 familyMembers = (uiState as CreateTaskUiState.final).familyMembers.orEmpty(),
+                childNames = (uiState as CreateTaskUiState.final).childNames.orEmpty(),
+                childUserNames = (uiState as CreateTaskUiState.final).childUserNames.orEmpty(),
                 onOkButtonClicked = onOkButtonClicked
             )
         }
@@ -100,6 +105,8 @@ fun CreateTaskPage(
     viewModel: CreateTaskViewModel,
     userName: String,
     familyMembers: List<String>,
+    childNames: List<String>,
+    childUserNames: List<String>,
     onOkButtonClicked: () -> Unit,
 ) {
     var taskName by remember { mutableStateOf("") }
@@ -204,7 +211,7 @@ fun CreateTaskPage(
 
             if (familyMembers.isNotEmpty()) {
                 DropDownFun(
-                    userList = familyMembers,
+                    userList = childNames,
                     title = "Select a child",
                     selectedUser = taskAssigneeUserName,
                     onValueChange = { selectedUser ->
@@ -238,11 +245,12 @@ fun CreateTaskPage(
                 buttonText = "Create Task",
                 isLoading = false,
                 onClick = {
+                    val index = childNames.indexOf(taskAssigneeUserName)
                     val task = CreateTaskRequestBody(
                         taskName = taskName,
                         taskDescription = taskDescription,
                         taskCreatorUserName = userName,
-                        taskAssigneeUserName = taskAssigneeUserName,
+                        taskAssigneeUserName = childUserNames[index],
                         taskDueDate = selectedDate?.format(DateTimeFormatter.ISO_LOCAL_DATE).toString(),
                         taskRewardPoints = taskRewardPoints.toIntOrNull() ?: 0,
                         priority = if (priority.isNotEmpty()) priority.toInt() else 0,

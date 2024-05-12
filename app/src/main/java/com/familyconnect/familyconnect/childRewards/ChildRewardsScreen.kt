@@ -85,7 +85,7 @@ fun ChildRewardsPage(
 
     Column {
         TopAppBar(
-            title = { Text(text = "All Family Rewards") },
+            title = { Text(text = "My Rewards") },
             navigationIcon = {
                 IconButton(onClick = { onOkButtonClicked() }) {
                     Icon(

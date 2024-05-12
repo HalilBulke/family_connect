@@ -196,28 +196,30 @@ fun ChildTasksPage(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.End
                                 ) {
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                            0xFF4CAF50
-                                        )
-                                        ),
-                                        onClick = {
-                                            onAcceptButtonClicked(task.taskAssigneeUserName,task.taskId)
-                                        },
-                                        modifier = Modifier.padding(end = 8.dp)
-                                    ) {
-                                        Text(text = "Approve")
-                                    }
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                            0xFFF44336
-                                        )
-                                        ),
-                                        onClick = {
-                                            onRejectButtonClicked(task.taskAssigneeUserName,task.taskId)
+                                    if (task.status.equals("IN_PROGRESS")){
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                                0xFF4CAF50
+                                            )
+                                            ),
+                                            onClick = {
+                                                onAcceptButtonClicked(task.taskAssigneeUserName,task.taskId)
+                                            },
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        ) {
+                                            Text(text = "Approve")
                                         }
-                                    ) {
-                                        Text(text = "Reject")
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                                0xFFF44336
+                                            )
+                                            ),
+                                            onClick = {
+                                                onRejectButtonClicked(task.taskAssigneeUserName,task.taskId)
+                                            }
+                                        ) {
+                                            Text(text = "Reject")
+                                        }
                                     }
                                 }
                             }

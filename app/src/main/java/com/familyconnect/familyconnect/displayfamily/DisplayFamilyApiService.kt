@@ -13,7 +13,7 @@ interface FamilyApiService {
     @GET("family/getFamilyMembersInformation")
     suspend fun getFamilyMembers(@Query("userName") userName: String): Response<List<FamilyMembers>>
 
-    @GET("family/getSpins")
+    @GET("family/getUserSpins")
     suspend fun getSpinWheels(@Query("username") userName: String): Response<List<SpinWheel>>
 
 

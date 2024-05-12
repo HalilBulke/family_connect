@@ -139,10 +139,22 @@ fun AllTasksScreenPage(
             )
             {
                 itemsIndexed(items = allTasks) { index, task ->
+
+                    val backgroundColor = when (task.status) {
+                        "IN_PROGRESS" -> Color(0xFF8BC34A)
+                        "PENDING" -> Color(0xFFFF9800)
+                        "FAILED" -> Color(0xFFF44336)
+                        "COMPLETED" -> Color(0xFF009688)
+                        else -> Color.Gray
+                    }
+
                     Box(
                         modifier = Modifier.animateItemPlacement(tween(500))
                     ) {
-                        ItemCard(modifier = Modifier.padding(4.dp)) {
+                        ItemCard(
+                            modifier = Modifier.padding(4.dp),
+                            cardColor = backgroundColor
+                        ) {
                             Column(
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -186,24 +198,26 @@ fun AllTasksScreenPage(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.End
                                 ) {
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                            0xFF4CAF50
-                                        )
-                                        ),
-                                        onClick = { onAcceptButtonClicked(task.taskCreatorUserName,task.taskId) },
-                                        modifier = Modifier.padding(end = 8.dp)
-                                    ) {
-                                        Text(text = "Approve")
-                                    }
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                            0xFFF44336
-                                        )
-                                        ),
-                                        onClick = { onRejectButtonClicked(task.taskCreatorUserName,task.taskId) }
-                                    ) {
-                                        Text(text = "Reject")
+                                    if (task.status.equals("IN_PROGRESS") || task.status.equals("PENDING")){
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                                0xFF4CAF50
+                                            )
+                                            ),
+                                            onClick = { onAcceptButtonClicked(task.taskCreatorUserName,task.taskId) },
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        ) {
+                                            Text(text = "Approve")
+                                        }
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                                0xFFF44336
+                                            )
+                                            ),
+                                            onClick = { onRejectButtonClicked(task.taskCreatorUserName,task.taskId) }
+                                        ) {
+                                            Text(text = "Reject")
+                                        }
                                     }
                                 }
                             }

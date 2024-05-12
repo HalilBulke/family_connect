@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -145,10 +146,20 @@ fun AllProgressPage(
             )
             {
                 itemsIndexed(items = allProgress) { _, progress ->
+
+                    val backgroundColor = when (progress.progressStatus) {
+                        "IN_PROGRESS" -> Color(0xFF8BC34A)
+                        "CANCELLED" -> Color(0xFFF44336)
+                        "COMPLETED" -> Color(0xFF009688)
+                        else -> Color.Gray
+                    }
+
                     Box(
                         modifier = Modifier.animateItemPlacement(tween(500))
                     ) {
-                        ItemCard(modifier = Modifier.padding(4.dp)) {
+                        ItemCard(
+                            modifier = Modifier.padding(4.dp),
+                            cardColor = backgroundColor) {
                             Column(
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -160,6 +171,11 @@ fun AllProgressPage(
                                 Text(text = "Assigned To: ${progress.assignedTo.substringBefore("@")}", fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(text = "Due Date: ${(progress.dueDate.take(10))}", fontSize = 16.sp)
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Status: ${progress.progressStatus}",
+                                    fontSize = 16.sp
+                                )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 LinearProgressIndicator(
                                     progress = progress.currentStatus.toFloat() / progress.quota.toFloat(),
@@ -177,25 +193,28 @@ fun AllProgressPage(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.End
                                 ) {
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                            0xFF4CAF50
-                                        )
-                                        ),
-                                        onClick = { onAcceptButtonClicked(progress.createdBy,progress.progressId) },
-                                        modifier = Modifier.padding(end = 8.dp)
-                                    ) {
-                                        Text(text = "Approve")
+                                    if (progress.progressStatus.equals("IN_PROGRESS")){
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                                0xFF4CAF50
+                                            )
+                                            ),
+                                            onClick = { onAcceptButtonClicked(progress.createdBy,progress.progressId) },
+                                            modifier = Modifier.padding(end = 8.dp)
+                                        ) {
+                                            Text(text = "Approve")
+                                        }
+                                        Button(
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(
+                                                0xFFF44336
+                                            )
+                                            ),
+                                            onClick = { onRejectButtonClicked(progress.createdBy,progress.progressId) }
+                                        ) {
+                                            Text(text = "Reject")
+                                        }
                                     }
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(
-                                            0xFFF44336
-                                        )
-                                        ),
-                                        onClick = { onRejectButtonClicked(progress.createdBy,progress.progressId) }
-                                    ) {
-                                        Text(text = "Reject")
-                                    }
+
                                 }
                             }
                         }
