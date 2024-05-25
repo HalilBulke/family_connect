@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
@@ -77,6 +78,8 @@ fun SpinWheelScreen(
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
                 onClickSecondButton = { onOkButtonClicked() },
+                title = (uiState as SpinWheelUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as SpinWheelUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is SpinWheelUiState.Loading -> {

@@ -39,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.ItemCard
@@ -61,6 +62,8 @@ fun AllTasksScreen(
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
                 onClickSecondButton = { onOkButtonClicked() },
+                title = (uiState as AllTasksUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as AllTasksUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is AllTasksUiState.Loading -> {

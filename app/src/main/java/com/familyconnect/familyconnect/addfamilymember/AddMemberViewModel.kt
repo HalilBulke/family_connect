@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.familyconnect.familyconnect.displayfamily.MyFamily
 import com.familyconnect.familyconnect.displayfamily.MyFamilyUiState
+import com.familyconnect.familyconnect.task.CreateTaskUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 sealed interface AddFamilyMemberUiState {
     object Default : AddFamilyMemberUiState
     object Loading : AddFamilyMemberUiState
-    object Error : AddFamilyMemberUiState
+    data class Error(val errorMessageTitle: String? = "Add Member Error",val errorMessageDescription: String? = "Error Description") :
+        AddFamilyMemberUiState
     object Success : AddFamilyMemberUiState
 }
 
@@ -29,6 +31,11 @@ class AddFamilyMemberViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AddFamilyMemberUiState>(AddFamilyMemberUiState.Default)
     val uiState: StateFlow<AddFamilyMemberUiState> = _uiState
 
+    fun retry() {
+        Log.d("retry", "retry")
+        _uiState.value = AddFamilyMemberUiState.Default
+    }
+
     fun addFamilyMember(request: AddFamilyMemberRequest) {
         viewModelScope.launch {
             _uiState.value = AddFamilyMemberUiState.Loading
@@ -39,15 +46,16 @@ class AddFamilyMemberViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _uiState.value = AddFamilyMemberUiState.Success
                     delay(500)
+                    _uiState.value = AddFamilyMemberUiState.Default
                 } else {
-                    _uiState.value = AddFamilyMemberUiState.Error
-                    delay(500)
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = AddFamilyMemberUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = AddFamilyMemberUiState.Error
-                delay(500)
-            } finally {
-                _uiState.value = AddFamilyMemberUiState.Default
+                _uiState.value = AddFamilyMemberUiState.Error()
             }
         }
     }

@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.allProgress.AllProgressUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 sealed interface ChildProgressUiState {
     object Loading : ChildProgressUiState
-    object Error : ChildProgressUiState
+    data class Error(val errorMessageTitle: String? = "All Progresses Error",val errorMessageDescription: String? = "Error Description") :
+        ChildProgressUiState
     data class Success(val allProgressList: List<Progress>?) : ChildProgressUiState
 }
 
@@ -52,10 +54,14 @@ class ProgressViewModel @Inject constructor(
                         response.body()
                     )
                 } else {
-                    _uiState.value = ChildProgressUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = ChildProgressUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: IOException) {
-                _uiState.value = ChildProgressUiState.Error
+                _uiState.value = ChildProgressUiState.Error()
             }
         }
     }

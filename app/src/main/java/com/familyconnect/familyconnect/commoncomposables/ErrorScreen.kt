@@ -44,10 +44,10 @@ fun ErrorScreen(
     onClickFirstButton: () -> Unit,
     onClickSecondButton: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = "Beklenmedik bir hata ile karşılaşıldı",
-    description: String = "Şu anda isteğinizi gerçekleştiremiyoruz",
-    firstButtonText: String = "Tamam",
-    secondButtonText: String = "Tekrar Dene"
+    title: String = "ERROR!",
+    description: String = "Something went wrong.\n Go back or try again.",
+    firstButtonText: String = "OK",
+    secondButtonText: String = "RETRY"
 ) {
     Box(
         modifier = modifier

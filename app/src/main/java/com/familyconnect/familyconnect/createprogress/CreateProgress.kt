@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import com.familyconnect.familyconnect.commoncomposables.DropDownFun
@@ -68,6 +69,7 @@ fun CreateProgressScreen(
     viewModel: CreateProgressViewModel = hiltViewModel(),
     username: String,
     onOkButtonClicked: () -> Unit,
+    onReTryButtonClicked:() -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -75,7 +77,9 @@ fun CreateProgressScreen(
         is CreateProgressUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
-                onClickSecondButton = { onOkButtonClicked() },
+                onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as CreateProgressUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as CreateProgressUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is CreateProgressUiState.Loading -> {

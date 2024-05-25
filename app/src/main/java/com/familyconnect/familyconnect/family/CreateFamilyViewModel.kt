@@ -1,7 +1,9 @@
 package com.familyconnect.familyconnect.family
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +14,8 @@ import javax.inject.Inject
 sealed interface CreateFamilyUiState {
     object Default : CreateFamilyUiState
     object Loading : CreateFamilyUiState
-    object Error : CreateFamilyUiState
+    data class Error(val errorMessageTitle: String? = "Create Family Error",val errorMessageDescription: String? = "Error Description") :
+        CreateFamilyUiState
     object Success : CreateFamilyUiState
 }
 
@@ -33,13 +36,16 @@ class CreateFamilyViewModel @Inject constructor(
                 if (response.isSuccessful && response.body() != null) {
                     _uiState.value = CreateFamilyUiState.Success
                     delay(500)
+                    _uiState.value = CreateFamilyUiState.Default
                 } else {
-                    _uiState.value = CreateFamilyUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = CreateFamilyUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = CreateFamilyUiState.Error
-            } finally {
-                _uiState.value = CreateFamilyUiState.Default
+                _uiState.value = CreateFamilyUiState.Error()
             }
         }
     }

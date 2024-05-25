@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
@@ -56,6 +57,8 @@ fun CreateFamilyScreen(
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
                 onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as CreateFamilyUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as CreateFamilyUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is CreateFamilyUiState.Loading -> {

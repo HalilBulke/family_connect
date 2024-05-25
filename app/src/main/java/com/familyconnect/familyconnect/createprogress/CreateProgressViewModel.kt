@@ -23,7 +23,8 @@ import javax.inject.Inject
 sealed interface CreateProgressUiState {
     data class Default(val familyMembers: List<String>, val childNames: List<String>?, val childUserNames: List<String>?) : CreateProgressUiState
     object Loading : CreateProgressUiState
-    object Error : CreateProgressUiState
+    data class Error(val errorMessageTitle: String? = "Create Progress Error",val errorMessageDescription: String? = "Error Description") :
+        CreateProgressUiState
     object Success : CreateProgressUiState
 }
 
@@ -52,6 +53,15 @@ class CreateProgressViewModel @Inject constructor(
         loadFamilyMembers(userName = userName)
     }
 
+    fun retry() {
+        Log.d("retry", "retry")
+        _uiState.value = CreateProgressUiState.Default(
+            familyMembers = _familyMembers.value,
+            childNames = _childNames.value,
+            childUserNames = _childUserNames.value
+        )
+    }
+
     fun addProgress(progress: CreateProgressRequestBody) {
         viewModelScope.launch {
             try {
@@ -61,17 +71,20 @@ class CreateProgressViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _uiState.value = CreateProgressUiState.Success
                     delay(500)
+                    _uiState.value = CreateProgressUiState.Default(
+                        familyMembers = _familyMembers.value,
+                        childNames = _childNames.value,
+                        childUserNames = _childUserNames.value
+                    )
                 } else {
-                    _uiState.value = CreateProgressUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = CreateProgressUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = CreateProgressUiState.Error
-            } finally {
-                _uiState.value = CreateProgressUiState.Default(
-                    familyMembers = _familyMembers.value,
-                    childNames = _childNames.value,
-                    childUserNames = _childUserNames.value
-                )
+                _uiState.value = CreateProgressUiState.Error()
             }
         }
     }
@@ -97,10 +110,14 @@ class CreateProgressViewModel @Inject constructor(
                                         usernames.add(username)
                                     }
                                 } else {
-                                    _uiState.value = CreateProgressUiState.Error
+                                    val errorBody = newResponse.errorBody()?.string()
+                                    _uiState.value = CreateProgressUiState.Error(
+                                        errorMessageDescription = errorBody ?: "Unknown error"
+                                    )
+                                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                                 }
                             } catch (e: Exception) {
-                                _uiState.value = CreateProgressUiState.Error
+                                _uiState.value = CreateProgressUiState.Error()
                             }
                         }
                         _uiState.value = CreateProgressUiState.Default(
@@ -112,13 +129,17 @@ class CreateProgressViewModel @Inject constructor(
                         _childNames.value = names
                         _childUserNames.value = usernames
                     } else {
-                        _uiState.value = CreateProgressUiState.Error
+                        _uiState.value = CreateProgressUiState.Error()
                     }
                 } else {
-                    _uiState.value = CreateProgressUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = CreateProgressUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = CreateProgressUiState.Error
+                _uiState.value = CreateProgressUiState.Error()
             }
         }
     }

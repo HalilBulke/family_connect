@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.familyconnect.familyconnect.R
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.ItemCard
@@ -61,6 +62,8 @@ fun FamilyRewardsScreen(
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
                 onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as FamilyRewardsUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as FamilyRewardsUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is FamilyRewardsUiState.Loading -> {

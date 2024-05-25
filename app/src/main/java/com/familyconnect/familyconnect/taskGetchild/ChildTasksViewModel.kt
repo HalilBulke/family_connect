@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -15,7 +16,8 @@ import javax.inject.Inject
 sealed interface ChildTasksUiState {
     data class Success(val allTasks: List<Task>?) : ChildTasksUiState
     object Loading : ChildTasksUiState
-    object Error : ChildTasksUiState
+    data class Error(val errorMessageTitle: String? = "All Tasks Error",val errorMessageDescription: String? = "Error Description") :
+        ChildTasksUiState
 }
 
 @HiltViewModel
@@ -44,10 +46,14 @@ class ChildTasksViewModel @Inject constructor(
                         getAllTasksResponse.body()
                     )
                 } else {
-                    _uiState.value = ChildTasksUiState.Error
+                    val errorBody = getAllTasksResponse.errorBody()?.string()
+                    _uiState.value = ChildTasksUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = ChildTasksUiState.Error
+                _uiState.value = ChildTasksUiState.Error()
             }
         }
     }
@@ -61,11 +67,15 @@ class ChildTasksViewModel @Inject constructor(
                 if (acceptTask.isSuccessful) {
                     getChildTasks(userName)
                 } else {
-                    _uiState.value = ChildTasksUiState.Error
+                    val errorBody = acceptTask.errorBody()?.string()
+                    _uiState.value = ChildTasksUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
                 Log.d("catch error", e.toString())
-                _uiState.value = ChildTasksUiState.Error
+                _uiState.value = ChildTasksUiState.Error()
             }
         }
     }
@@ -79,11 +89,15 @@ class ChildTasksViewModel @Inject constructor(
                 if (rejectTask.isSuccessful) {
                     getChildTasks(userName)
                 } else {
-                    _uiState.value = ChildTasksUiState.Error
+                    val errorBody = rejectTask.errorBody()?.string()
+                    _uiState.value = ChildTasksUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
                 Log.d("catch error", e.toString())
-                _uiState.value = ChildTasksUiState.Error
+                _uiState.value = ChildTasksUiState.Error()
             }
         }
     }

@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.AppButton
 import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
@@ -64,7 +65,9 @@ fun CreateEventScreen(
         is CreateEventUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
-                onClickSecondButton = { onReTryButtonClicked() }
+                onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as CreateEventUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as CreateEventUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is CreateEventUiState.Loading -> {

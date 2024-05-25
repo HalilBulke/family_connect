@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.createprogress.CreateProgressApiService
 import com.familyconnect.familyconnect.createprogress.CreateProgressRequestBody
 import com.familyconnect.familyconnect.createprogress.CreateProgressUiState
@@ -20,7 +21,8 @@ import javax.inject.Inject
 sealed interface SpinWheelUiState {
     data class Success(val spinList: List<SpinWheel>) : SpinWheelUiState
     object Loading : SpinWheelUiState
-    object Error : SpinWheelUiState
+    data class Error(val errorMessageTitle: String? = "Spin Wheel Screen Error",val errorMessageDescription: String? = "Error Description") :
+        SpinWheelUiState
 }
 
 
@@ -58,13 +60,17 @@ class SpinWheelViewModel @Inject constructor(
                         )
                         _spinWheels.value = responseData
                     } else {
-                        _uiState.value = SpinWheelUiState.Error
+                        _uiState.value = SpinWheelUiState.Error()
                     }
                 } else {
-                    _uiState.value = SpinWheelUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = SpinWheelUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = SpinWheelUiState.Error
+                _uiState.value = SpinWheelUiState.Error()
             }
         }
     }
@@ -78,10 +84,14 @@ class SpinWheelViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _uiState.value = SpinWheelUiState.Success(_spinWheels.value)
                 } else {
-                    _uiState.value = SpinWheelUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = SpinWheelUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = SpinWheelUiState.Error
+                _uiState.value = SpinWheelUiState.Error()
             }
         }
     }

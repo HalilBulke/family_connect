@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.calendar.CalenderUiState
 import com.familyconnect.familyconnect.progressGetChild.Progress
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksUiState
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 sealed interface FamilyHubUiState {
     object Loading : FamilyHubUiState
-    object Error : FamilyHubUiState
+    data class Error(val errorMessageTitle: String? = "Family Hub Error",val errorMessageDescription: String? = "Error Description") :
+        FamilyHubUiState
     data class Success(val allMessages: List<ChatBaseMessage>?) : FamilyHubUiState
 }
 
@@ -55,13 +57,17 @@ class FamilyHubViewModel @Inject constructor(
                             response.body()
                         )
                     } else {
-                        _uiState.value = FamilyHubUiState.Error
+                        val errorBody = response.errorBody()?.string()
+                        _uiState.value = FamilyHubUiState.Error(
+                            errorMessageDescription = errorBody ?: "Unknown error"
+                        )
+                        Log.d("ERROR BODY", errorBody ?: "Unknown error")
                     }
                     delay(1000)
                 }
 
             } catch (e: IOException) {
-                _uiState.value = FamilyHubUiState.Error
+                _uiState.value = FamilyHubUiState.Error()
             }
         }
     }
@@ -74,12 +80,16 @@ class FamilyHubViewModel @Inject constructor(
                     Log.d("sendMesaage",sendMessage.toString())
                     loadAllMessages(userName)
                 } else {
-                    _uiState.value = FamilyHubUiState.Error
+                    val errorBody = sendMessage.errorBody()?.string()
+                    _uiState.value = FamilyHubUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                     Log.d("sendMesaage Else",sendMessage.toString())
                 }
             } catch (e: Exception) {
                 Log.d("sendMesaage catch",e.toString())
-                _uiState.value = FamilyHubUiState.Error
+                _uiState.value = FamilyHubUiState.Error()
             }
         }
     }
@@ -91,10 +101,14 @@ class FamilyHubViewModel @Inject constructor(
                 if (surveyResponse.isSuccessful) {
                     loadAllMessages(userName)
                 } else {
-                    _uiState.value = FamilyHubUiState.Error
+                    val errorBody = surveyResponse.errorBody()?.string()
+                    _uiState.value = FamilyHubUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = FamilyHubUiState.Error
+                _uiState.value = FamilyHubUiState.Error()
             }
         }
     }
@@ -107,12 +121,16 @@ class FamilyHubViewModel @Inject constructor(
                     Log.d("voteSurvey",voteSurvey.toString())
                     loadAllMessages(userName)
                 } else {
-                    _uiState.value = FamilyHubUiState.Error
+                    val errorBody = voteSurvey.errorBody()?.string()
+                    _uiState.value = FamilyHubUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                     Log.d("voteSurvey Else",voteSurvey.toString())
                 }
             } catch (e: Exception) {
                 Log.d("voteSurvey catch",e.toString())
-                _uiState.value = FamilyHubUiState.Error
+                _uiState.value = FamilyHubUiState.Error()
             }
         }
     }

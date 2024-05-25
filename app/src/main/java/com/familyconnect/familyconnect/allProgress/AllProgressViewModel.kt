@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.calendar.CalenderUiState
 import com.familyconnect.familyconnect.progressGetChild.Progress
 import com.familyconnect.familyconnect.showallgiventasks.AllTasksUiState
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 sealed interface AllProgressUiState {
     object Loading : AllProgressUiState
-    object Error : AllProgressUiState
+    data class Error(val errorMessageTitle: String? = "All Progresses Error",val errorMessageDescription: String? = "Error Description") :
+        AllProgressUiState
     data class Success(val allProgressList: List<Progress>?) : AllProgressUiState
 }
 
@@ -54,10 +56,14 @@ class AllProgressViewModel @Inject constructor(
                         response.body()
                     )
                 } else {
-                    _uiState.value = AllProgressUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = AllProgressUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: IOException) {
-                _uiState.value = AllProgressUiState.Error
+                _uiState.value = AllProgressUiState.Error()
             }
         }
     }
@@ -72,11 +78,15 @@ class AllProgressViewModel @Inject constructor(
                     loadAllProgress(userName)
                 } else {
                     Log.d("parent taskı accept", acceptTask.body().toString())
-                    _uiState.value = AllProgressUiState.Error
+                    val errorBody = acceptTask.errorBody()?.string()
+                    _uiState.value = AllProgressUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
                 Log.d("parent taskı accept", e.toString())
-                _uiState.value = AllProgressUiState.Error
+                _uiState.value = AllProgressUiState.Error()
             }
         }
     }
@@ -90,13 +100,17 @@ class AllProgressViewModel @Inject constructor(
                 if (rejectTask.isSuccessful) {
                     loadAllProgress(userName)
                 } else {
-                    _uiState.value = AllProgressUiState.Error
+                    val errorBody = rejectTask.errorBody()?.string()
+                    _uiState.value = AllProgressUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                     Log.d("parent progress reject", rejectTask.toString())
 
                 }
             } catch (e: Exception) {
                 Log.d("catch error", e.toString())
-                _uiState.value = AllProgressUiState.Error
+                _uiState.value = AllProgressUiState.Error()
             }
         }
     }

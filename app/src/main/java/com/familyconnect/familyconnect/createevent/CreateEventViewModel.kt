@@ -17,7 +17,8 @@ import javax.inject.Inject
 sealed interface CreateEventUiState {
     object Default : CreateEventUiState
     object Loading : CreateEventUiState
-    object Error : CreateEventUiState
+    data class Error(val errorMessageTitle: String? = "Add Event Error",val errorMessageDescription: String? = "Error Description") :
+        CreateEventUiState
     object Success : CreateEventUiState
 }
 
@@ -44,14 +45,16 @@ class CreateEventViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     _uiState.value = CreateEventUiState.Success
                     delay(500)
+                    _uiState.value = CreateEventUiState.Default
                 } else {
-                    _uiState.value = CreateEventUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = CreateEventUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = CreateEventUiState.Error
-            }
-            finally {
-                _uiState.value = CreateEventUiState.Default
+                _uiState.value = CreateEventUiState.Error()
             }
         }
     }

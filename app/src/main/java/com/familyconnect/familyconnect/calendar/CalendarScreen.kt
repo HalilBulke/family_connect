@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.EmptyTaskComponent
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
@@ -85,7 +86,9 @@ fun CalendarScreen(
         is CalenderUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
-                onClickSecondButton = { onReTryButtonClicked() }
+                onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as CalenderUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as CalenderUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is CalenderUiState.Loading -> {

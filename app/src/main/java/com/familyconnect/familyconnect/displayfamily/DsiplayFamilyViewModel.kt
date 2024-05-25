@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 sealed interface MyFamilyUiState {
     object Loading : MyFamilyUiState
-    object Error : MyFamilyUiState
+    data class Error(val errorMessageTitle: String? = "Display Family Error",val errorMessageDescription: String? = "Error Description") :
+        MyFamilyUiState
     data class Success(val family: MyFamily) : MyFamilyUiState
 }
 
@@ -55,13 +57,17 @@ class MyFamilyViewModel @Inject constructor(
                             creatorUserName = familyResponseData.creatorUserName
                         ))
                     } else {
-                        _uiState.value = MyFamilyUiState.Error
+                        _uiState.value = MyFamilyUiState.Error()
                     }
                 } else {
-                    _uiState.value = MyFamilyUiState.Error
+                    val errorBody = familyResponse.errorBody()?.string()
+                    _uiState.value = MyFamilyUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
-                _uiState.value = MyFamilyUiState.Error
+                _uiState.value = MyFamilyUiState.Error()
             }
         }
     }

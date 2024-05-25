@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 sealed interface CreateTaskUiState {
     object Loading : CreateTaskUiState
-    data class Error(val errorMessageTitle: String? = "Create Task Error",val errorMessageDescription: String? = "Description") : CreateTaskUiState
+    data class Error(val errorMessageTitle: String? = "Create Task Error",val errorMessageDescription: String? = "Error Description") : CreateTaskUiState
     data class final(val familyMembers: List<String>?, val childNames: List<String>?, val childUserNames: List<String>?) : CreateTaskUiState
     data class Success(val familyMembers: List<String>?, val childNames: List<String>?, val childUserNames: List<String>? ) : CreateTaskUiState
 }
@@ -65,7 +65,11 @@ class CreateTaskViewModel @Inject constructor(
                         childNames = _childNames.value,
                         childUserNames = _childUserNames.value)
                 } else {
-                    _uiState.value = CreateTaskUiState.Error()
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = CreateTaskUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: Exception) {
                 _uiState.value = CreateTaskUiState.Error()

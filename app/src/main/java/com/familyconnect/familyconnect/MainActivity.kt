@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberScreen
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberViewModel
 import com.familyconnect.familyconnect.allProgress.AllProgressScreen
 import com.familyconnect.familyconnect.allProgress.AllProgressViewModel
 import com.familyconnect.familyconnect.calendar.CalendarScreen
@@ -29,6 +30,7 @@ import com.familyconnect.familyconnect.childRewards.ChildRewardsViewModel
 import com.familyconnect.familyconnect.createevent.CreateEventScreen
 import com.familyconnect.familyconnect.createevent.CreateEventViewModel
 import com.familyconnect.familyconnect.createprogress.CreateProgressScreen
+import com.familyconnect.familyconnect.createprogress.CreateProgressViewModel
 import com.familyconnect.familyconnect.displayfamily.MyFamilyScreen
 import com.familyconnect.familyconnect.displayfamily.MyFamilyViewModel
 import com.familyconnect.familyconnect.family.CreateFamilyScreen
@@ -184,9 +186,12 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                         {backstackEntry ->
+                            val viewModel: CreateProgressViewModel = hiltViewModel()
+
                             CreateProgressScreen(
                                 username = backstackEntry.arguments?.getString("username").orEmpty(),
                                 onOkButtonClicked = { navController.navigateUp() } ,
+                                onReTryButtonClicked = { viewModel.retry() },
                                 )
                         }
                         composable(route = "createFamily/{username}",
@@ -282,9 +287,12 @@ class MainActivity : ComponentActivity() {
                                     type = NavType.StringType
                                 }
                             )) {backstackEntry ->
+                            val viewModel: AddFamilyMemberViewModel = hiltViewModel()
+
                             AddFamilyMemberScreen(
                                 familyId = backstackEntry.arguments?.getString("familyId"),
                                 onOkButtonClicked = { navController.navigateUp() },
+                                onReTryButtonClicked = { viewModel.retry() },
                             )
                         }
 

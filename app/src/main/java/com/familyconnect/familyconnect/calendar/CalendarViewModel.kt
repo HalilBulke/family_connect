@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.task.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 
 sealed interface CalenderUiState {
     object Loading : CalenderUiState
-    object Error : CalenderUiState
+    data class Error(val errorMessageTitle: String? = "Calendar Error",val errorMessageDescription: String? = "Error Description") :
+        CalenderUiState
     data class Success(val calenderList: List<Task>?) : CalenderUiState
 }
 
@@ -67,10 +69,14 @@ class CalendarViewModel @Inject constructor(
                         }
                     )
                 } else {
-                    _uiState.value = CalenderUiState.Error
+                    val errorBody = response.errorBody()?.string()
+                    _uiState.value = CalenderUiState.Error(
+                        errorMessageDescription = errorBody ?: "Unknown error"
+                    )
+                    Log.d("ERROR BODY", errorBody ?: "Unknown error")
                 }
             } catch (e: IOException) {
-                _uiState.value = CalenderUiState.Error
+                _uiState.value = CalenderUiState.Error()
             }
         }
     }

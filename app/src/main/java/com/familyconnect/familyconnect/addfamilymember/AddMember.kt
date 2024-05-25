@@ -34,6 +34,7 @@ import com.familyconnect.familyconnect.commoncomposables.AppInputField
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.ItemCard
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
+import com.familyconnect.familyconnect.task.CreateTaskUiState
 import com.familyconnect.familyconnect.util.makeToast
 
 @Composable
@@ -41,6 +42,7 @@ fun AddFamilyMemberScreen(
     viewModel: AddFamilyMemberViewModel = hiltViewModel(),
     familyId : String?,
     onOkButtonClicked: () -> Unit,
+    onReTryButtonClicked:() -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -48,7 +50,9 @@ fun AddFamilyMemberScreen(
         is AddFamilyMemberUiState.Error -> {
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
-                onClickSecondButton = { onOkButtonClicked() },
+                onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as AddFamilyMemberUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as AddFamilyMemberUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is AddFamilyMemberUiState.Loading -> {

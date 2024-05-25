@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.familyconnect.familyconnect.addfamilymember.AddFamilyMemberUiState
 import com.familyconnect.familyconnect.commoncomposables.ErrorScreen
 import com.familyconnect.familyconnect.commoncomposables.LoadingScreen
 import com.familyconnect.familyconnect.ui.theme.PurpleGrey80
@@ -81,6 +82,8 @@ fun FamilyHubScreen(
             ErrorScreen(
                 onClickFirstButton = { onOkButtonClicked() },
                 onClickSecondButton = { onReTryButtonClicked() },
+                title = (uiState as FamilyHubUiState.Error).errorMessageTitle.orEmpty(),
+                description = (uiState as FamilyHubUiState.Error).errorMessageDescription.orEmpty()
             )
         }
         is FamilyHubUiState.Loading -> {
